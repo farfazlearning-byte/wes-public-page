@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="en" data-eye="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>WES Design Demos — Choose One</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@500;600;700;800&family=Catamaran:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; font-family: "Catamaran", system-ui, sans-serif; background: var(--chrome-bg); }
+      h1, h2, h3, p { margin: 0; }
+      button { font: inherit; cursor: pointer; }
+
+      /* ---------- Page chrome (switcher bar) ---------- */
+      html[data-eye="light"] { --chrome-bg: #f4f6f8; --chrome-panel: #ffffff; --chrome-ink: #1d2733; --chrome-muted: #5d6d7e; --chrome-line: #dde4ec; --chrome-on: #146c43; }
+      html[data-eye="dark"]  { --chrome-bg: #070b0e; --chrome-panel: #10181d; --chrome-ink: #eef4f6; --chrome-muted: #93a7b1; --chrome-line: #24333c; --chrome-on: #ffc94d; }
+      html[data-eye="care"]  { --chrome-bg: #f3e9d2; --chrome-panel: #fff8e7; --chrome-ink: #4a3a20; --chrome-muted: #8a744c; --chrome-line: #e2d0a4; --chrome-on: #a8741a; }
+
+      .topbar {
+        position: sticky; top: 0; z-index: 50;
+        background: var(--chrome-panel);
+        border-bottom: 1px solid var(--chrome-line);
+        padding: 10px 14px 12px;
+      }
+      .topbar-inner { max-width: 1080px; margin: 0 auto; }
+      .topbar-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .topbar-title h1 { font-size: 17px; font-weight: 700; color: var(--chrome-ink); letter-spacing: .01em; }
+      .topbar-title h1 .ta { color: var(--chrome-muted); font-weight: 600; }
+      .topbar-title p { font-size: 13px; color: var(--chrome-muted); }
+      .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .tab {
+        flex: 1 1 30%; min-height: 52px; padding: 8px 10px;
+        display: flex; align-items: center; gap: 9px; text-align: left;
+        background: transparent; color: var(--chrome-ink);
+        border: 1.5px solid var(--chrome-line); border-radius: 14px;
+        transition: border-color .2s, background .2s, transform .2s;
+      }
+      .tab .num {
+        flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+        display: grid; place-items: center; font-weight: 800; font-size: 15px;
+        border: 1.5px solid var(--chrome-line); color: var(--chrome-muted);
+      }
+      .tab .tname { font-weight: 700; font-size: 14.5px; line-height: 1.15; }
+      .tab .tta { display: block; font-size: 12px; font-weight: 600; color: var(--chrome-muted); }
+      .tab[aria-selected="true"] { border-color: var(--chrome-on); background: color-mix(in srgb, var(--chrome-on) 12%, transparent); }
+      .tab[aria-selected="true"] .num { background: var(--chrome-on); border-color: var(--chrome-on); color: #10130c; }
+      html[data-eye="light"] .tab[aria-selected="true"] .num { color: #fff; }
+      .tab:active { transform: scale(.98); }
+
+      .eyebar { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+      .eyebar .eye-label { font-size: 13px; font-weight: 700; color: var(--chrome-muted); margin-right: 2px; }
+      .eye-btn {
+        min-height: 44px; padding: 8px 16px; border-radius: 999px;
+        border: 1.5px solid var(--chrome-line); background: transparent; color: var(--chrome-ink);
+        font-weight: 700; font-size: 14px;
+      }
+      .eye-btn .ta { font-weight: 600; color: var(--chrome-muted); font-size: 12.5px; }
+      .eye-btn[aria-pressed="true"] { background: var(--chrome-ink); color: var(--chrome-panel); border-color: var(--chrome-ink); }
+      .eye-btn[aria-pressed="true"] .ta { color: inherit; opacity: .75; }
+
+      /* ---------- Shared demo scaffolding ---------- */
+      .demo { display: none; background: var(--bg); color: var(--ink); font-family: var(--body-font); overflow: hidden; }
+      .demo.active { display: block; animation: demoIn .45s ease both; }
+      @keyframes demoIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+      .wrap { max-width: 1060px; margin: 0 auto; padding: 34px 18px 30px; position: relative; }
+      .sec-head { margin: 40px 0 16px; }
+      .sec-head h2 { font-family: var(--head-font); font-size: clamp(21px, 3.4vw, 28px); font-weight: 800; line-height: 1.2; }
+      .sec-head h2 .ta { color: var(--accent); }
+      .sec-head p { color: var(--muted); font-size: 15.5px; margin-top: 4px; max-width: 56ch; }
+
+      /* Hero / brand */
+      .hero { text-align: center; padding: 14px 0 6px; position: relative; }
+      .hero .brandline { font-family: var(--head-font); font-weight: 800; line-height: 1.14; font-size: clamp(27px, 5.6vw, 46px); letter-spacing: .005em; }
+      .hero .brandline .gold { color: var(--accent); }
+      .hero .brand-ta { margin-top: 10px; font-size: clamp(15px, 2.6vw, 19px); font-weight: 600; color: var(--muted); }
+      .hero .welcome { margin: 14px auto 0; max-width: 58ch; font-size: 16px; line-height: 1.55; color: var(--muted); }
+      .hero .welcome strong { color: var(--ink); }
+
+      /* World map panel */
+      .map-panel { margin-top: 28px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(14px, 3vw, 26px); position: relative; }
+      .map-panel .map-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+      .map-panel .map-top h2 { font-family: var(--head-font); font-size: clamp(19px, 3vw, 24px); font-weight: 800; }
+      .map-panel .map-top h2 .ta { color: var(--accent); }
+      .map-panel .map-top span { color: var(--muted); font-size: 14px; font-weight: 600; }
+      .map-wrap { position: relative; }
+      .map-svg { width: 100%; height: auto; display: block; }
+      .map-svg .grat { stroke: var(--line); stroke-width: 1; opacity: .35; fill: none; }
+      .map-svg .land { fill: var(--land); }
+      .map-svg .glowdisc { fill: var(--accent2); opacity: .10; }
+      .map-svg .journey { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-dasharray: 7 8; opacity: 0; stroke-linecap: round; }
+      .pin { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 6px; pointer-events: none; }
+      .pin i { width: 13px; height: 13px; border-radius: 50%; background: var(--accent); border: 2.5px solid var(--panel); display: block; position: relative; flex: 0 0 auto; }
+      .pin i::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--accent); opacity: .55; animation: pinPulse 2.6s ease-out infinite; }
+      @keyframes pinPulse { 0% { transform: scale(.45); opacity: .7; } 70% { transform: scale(1.15); opacity: 0; } 100% { opacity: 0; } }
+      .pin b { font-size: 12.5px; font-weight: 700; background: var(--panel); border: 1px solid var(--line); color: var(--ink); padding: 2.5px 9px; border-radius: 999px; white-space: nowrap; }
+      .country-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+      .country-chips span { font-size: 14px; font-weight: 600; border: 1px solid var(--line); color: var(--ink); padding: 7px 14px; border-radius: 999px; background: var(--chip); }
+      .country-chips span.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+
+      /* Class cards */
+      .classes { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 14px; }
+      .class-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 16px 16px; position: relative; }
+      .class-card .cc-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--chip); color: var(--accent); margin-bottom: 12px; }
+      .class-card .cc-icon svg { width: 26px; height: 26px; }
+      .class-card h3 { font-family: var(--head-font); font-size: 20px; font-weight: 800; line-height: 1.1; }
+      .class-card .ta { color: var(--accent); font-weight: 700; font-size: 14.5px; margin-top: 2px; }
+      .class-card .desc { color: var(--muted); font-size: 14.5px; line-height: 1.45; margin-top: 7px; }
+      .class-card .go { margin-top: 13px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; color: var(--accent); }
+      .class-card .go svg { width: 15px; height: 15px; }
+
+      /* Voices */
+      .voices { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+      .voice-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: flex; gap: 15px; align-items: center; }
+      .voice-card .avatar { width: 58px; height: 58px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; font-family: var(--head-font); font-weight: 800; font-size: 24px; background: var(--accent); color: var(--on-accent); }
+      .voice-card.v2 .avatar { background: var(--accent2); }
+      .voice-card h3 { font-family: var(--head-font); font-size: 20px; font-weight: 800; }
+      .voice-card p { color: var(--muted); font-size: 14.5px; line-height: 1.4; }
+      .play-btn { margin-left: auto; flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--chip); color: var(--accent); display: grid; place-items: center; }
+      .play-btn svg { width: 20px; height: 20px; margin-left: 2px; }
+
+      /* Launch + prices */
+      .launch { margin-top: 40px; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(22px, 4vw, 36px) 18px; position: relative; }
+      .launch .l-kicker { font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 12.5px; color: var(--accent); }
+      .launch .l-kicker .ta { letter-spacing: 0; text-transform: none; font-size: 14px; }
+      .launch h2 { font-family: var(--head-font); font-size: clamp(25px, 4.6vw, 38px); font-weight: 800; margin-top: 8px; line-height: 1.15; }
+      .launch p { color: var(--muted); margin-top: 8px; font-size: 15.5px; }
+      .prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 14px; }
+      .price-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 18px; text-align: center; }
+      .price-card .p-name { font-weight: 700; font-size: 15px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+      .price-card .p-name .ta { text-transform: none; letter-spacing: 0; }
+      .price-card .p-amt { font-family: var(--head-font); font-size: 34px; font-weight: 800; margin-top: 6px; }
+      .price-card .p-amt small { font-size: 15px; font-weight: 600; color: var(--muted); font-family: var(--body-font); }
+      .price-card .p-note { color: var(--muted); font-size: 14px; margin-top: 4px; }
+      .design-tag { margin-top: 42px; text-align: center; font-family: var(--head-font); font-weight: 700; font-size: 15px; letter-spacing: .08em; color: var(--muted); }
+      .design-tag::before, .design-tag::after { content: ""; display: inline-block; width: 42px; height: 1px; background: var(--line); vertical-align: middle; margin: 0 12px; }
+
+      @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+      @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+        html { scroll-behavior: auto; }
+      }
+    </style>
+    <style>
+      /* ================= DESIGN 1 — LIVING WORLD ================= */
+      .demo-1 {
+        --head-font: "Sora", sans-serif; --body-font: "Catamaran", sans-serif;
+        --bg: #03130c; --panel: #082418; --card: #0a2c1c; --chip: #0f3d27;
+        --ink: #f0f7ea; --muted: #a7c9ab; --accent: #ffc94d; --accent2: #3ddc84;
+        --on-accent: #231a02; --line: rgba(255, 201, 77, .30); --land: #2f9e63; --radius: 22px;
+        background:
+          radial-gradient(720px 380px at 85% -60px, rgba(61, 220, 132, .20), transparent 65%),
+          radial-gradient(620px 420px at 8% 30%, rgba(255, 201, 77, .10), transparent 60%),
+          radial-gradient(900px 600px at 50% 115%, rgba(20, 120, 70, .22), transparent 65%),
+          var(--bg);
+      }
+      html[data-eye="light"] .demo-1 { --bg: #e9f9ee; --panel: #ffffff; --card: #ffffff; --chip: #dcf3e2; --ink: #0d2b1a; --muted: #4c6f57; --accent: #d99a16; --accent2: #159a52; --on-accent: #ffffff; --line: #b9e4c6; --land: #35b06a; }
+      html[data-eye="care"] .demo-1 { --bg: #f4ecd4; --panel: #fffaf0; --card: #fffaf0; --chip: #f1e3bc; --ink: #3e3420; --muted: #7d6c49; --accent: #b57f14; --accent2: #4d8a4f; --on-accent: #fff8e6; --line: #e0cd97; --land: #7fae62; }
+      .demo-1 .hero .brandline { text-shadow: 0 0 34px rgba(61, 220, 132, .35); }
+      .demo-1 .map-panel { box-shadow: 0 24px 60px rgba(0, 0, 0, .45), 0 0 0 1px rgba(61, 220, 132, .08), 0 0 44px rgba(61, 220, 132, .12); }
+      .demo-1 .map-svg .journey { opacity: .85; }
+      .demo-1 .class-card { box-shadow: 0 14px 30px rgba(0, 0, 0, .35); animation: floaty 7s ease-in-out infinite; }
+      .demo-1 .class-card:nth-child(2) { animation-delay: -1.4s; }
+      .demo-1 .class-card:nth-child(3) { animation-delay: -2.8s; }
+      .demo-1 .class-card:nth-child(4) { animation-delay: -4.2s; }
+      .demo-1 .class-card:nth-child(5) { animation-delay: -5.6s; }
+      @media (min-width: 760px) {
+        .demo-1 .class-card:nth-child(2) { margin-top: 18px; }
+        .demo-1 .class-card:nth-child(4) { margin-top: 18px; }
+      }
+      .demo-1 .class-card .cc-icon { border-radius: 50%; }
+      .demo-1 .voice-card, .demo-1 .price-card { box-shadow: 0 12px 26px rgba(0, 0, 0, .3); }
+      .demo-1 .launch { background: linear-gradient(135deg, rgba(61, 220, 132, .14), rgba(255, 201, 77, .10)), var(--panel); }
+
+      /* ================= DESIGN 2 — STORYBOOK CINEMA ================= */
+      .demo-2 {
+        --head-font: "Baloo Thambi 2", cursive; --body-font: "Catamaran", sans-serif;
+        --bg: #062830; --panel: #0a3540; --card: #fdf6df; --chip: #f3e5bd;
+        --ink: #fdf6e3; --muted: #b9d6cd; --accent: #f4b942; --accent2: #ff8c69;
+        --on-accent: #2a1a02; --line: rgba(244, 185, 66, .45); --land: #3fa08a; --radius: 18px;
+        background:
+          radial-gradient(700px 360px at 50% -80px, rgba(244, 185, 66, .16), transparent 60%),
+          radial-gradient(500px 500px at 100% 60%, rgba(255, 140, 105, .10), transparent 60%),
+          var(--bg);
+      }
+      html[data-eye="light"] .demo-2 { --bg: #e7f3ee; --panel: #ffffff; --ink: #123c3a; --muted: #57766d; --line: #cfe3d8; --land: #4db294; }
+      html[data-eye="care"] .demo-2 { --bg: #f6ecd2; --panel: #fffaf0; --ink: #44351d; --muted: #87754f; --accent: #c08c1d; --line: #e6d3a0; --land: #84ad72; }
+      .demo-2 .film { position: relative; }
+      .demo-2 .film::before, .demo-2 .film::after {
+        content: ""; position: absolute; left: 10px; right: 10px; height: 12px; z-index: 2;
+        background-image: radial-gradient(circle, var(--bg) 4.2px, transparent 4.8px);
+        background-size: 24px 12px; background-repeat: repeat-x; opacity: .9;
+      }
+      .demo-2 .film::before { top: 5px; }
+      .demo-2 .film::after { bottom: 5px; }
+      .demo-2 .map-panel { border: 3px solid var(--accent); border-radius: 26px; box-shadow: 0 20px 44px rgba(0, 0, 0, .4); padding-top: 30px; padding-bottom: 30px; }
+      .demo-2 .class-card { color: #2c2413; border: 2.5px solid #e9cf87; border-radius: 60px 60px 18px 18px; padding-top: 24px; box-shadow: 0 12px 24px rgba(0, 0, 0, .28); }
+      .demo-2 .class-card h3 { color: #173f3a; }
+      .demo-2 .class-card .ta { color: #c07f16; }
+      .demo-2 .class-card .desc { color: #6d6046; }
+      .demo-2 .class-card .cc-icon { background: #173f3a; color: #f4b942; border-radius: 50%; }
+      .demo-2 .class-card .go { color: #c07f16; }
+      .demo-2 .voice-card, .demo-2 .price-card { color: #2c2413; border: 2.5px solid #e9cf87; }
+      .demo-2 .voice-card h3, .demo-2 .price-card .p-amt { color: #173f3a; }
+      .demo-2 .voice-card p, .demo-2 .price-card .p-note, .demo-2 .price-card .p-amt small, .demo-2 .price-card .p-name { color: #6d6046; }
+      .demo-2 .voice-card .avatar { color: #2a1a02; }
+      .demo-2 .launch { border: 3px solid var(--accent); border-radius: 26px; background: radial-gradient(420px 200px at 50% 0%, rgba(244, 185, 66, .18), transparent 70%), var(--panel); }
+      .demo-2 .hero .brandline { text-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+
+      /* ================= DESIGN 3 — HOLOGRAM GRAND ================= */
+      .demo-3 {
+        --head-font: "Chakra Petch", sans-serif; --body-font: "Catamaran", sans-serif;
+        --bg: #02070a; --panel: rgba(94, 245, 200, .05); --card: rgba(94, 245, 200, .055); --chip: rgba(94, 245, 200, .10);
+        --ink: #eafff7; --muted: #8fb8ac; --accent: #5ff5c8; --accent2: #ffd166;
+        --on-accent: #03231a; --line: rgba(94, 245, 200, .38); --land: #1f8f6e; --radius: 6px;
+        background:
+          linear-gradient(rgba(94, 245, 200, .045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(94, 245, 200, .045) 1px, transparent 1px),
+          radial-gradient(760px 420px at 50% -60px, rgba(94, 245, 200, .13), transparent 62%),
+          var(--bg);
+        background-size: 44px 44px, 44px 44px, auto, auto;
+      }
+      html[data-eye="light"] .demo-3 { --bg: #edf7f3; --panel: #ffffff; --card: #ffffff; --chip: #ddf2e9; --ink: #0b2b24; --muted: #527066; --accent: #078a63; --accent2: #c08c1d; --on-accent: #ffffff; --line: #b7e2d2; --land: #3aa77f; }
+      html[data-eye="care"] .demo-3 { --bg: #f5edd7; --panel: #fffaf0; --card: #fffaf0; --chip: #f0e2ba; --ink: #40351f; --muted: #7d6c49; --accent: #8a6d1f; --accent2: #b57f14; --on-accent: #fff8e6; --line: #ddc88f; --land: #8aa763; }
+      .demo-3 .sec-head h2, .demo-3 .map-panel .map-top h2 { letter-spacing: .04em; text-transform: uppercase; font-size: clamp(18px, 2.8vw, 23px); }
+      .demo-3 .hero .brandline { letter-spacing: .02em; text-shadow: 0 0 26px rgba(94, 245, 200, .45); }
+      .demo-3 .map-panel, .demo-3 .class-card, .demo-3 .voice-card, .demo-3 .price-card, .demo-3 .launch {
+        clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+        border: 1px solid var(--line);
+        box-shadow: inset 0 0 32px rgba(94, 245, 200, .05), 0 0 22px rgba(94, 245, 200, .07);
+        backdrop-filter: blur(3px);
+      }
+      .demo-3 .orbit { position: absolute; border: 1.5px dashed var(--line); border-radius: 50%; pointer-events: none; }
+      .demo-3 .orbit.o1 { width: 118%; padding-top: 0; height: 132%; left: -9%; top: -16%; animation: spinSlow 46s linear infinite; }
+      .demo-3 .orbit.o2 { width: 104%; height: 112%; left: -2%; top: -6%; border-style: solid; opacity: .5; animation: spinSlow 70s linear infinite reverse; }
+      .demo-3 .class-card .cc-icon { border-radius: 4px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+      .demo-3 .pin b { border-radius: 3px; letter-spacing: .05em; }
+      .demo-3 .country-chips span { border-radius: 3px; letter-spacing: .04em; }
+      .demo-3 .play-btn { border-radius: 6px; }
+      .demo-3 .launch { background: radial-gradient(460px 220px at 50% 0%, rgba(255, 209, 102, .13), transparent 70%), var(--panel); }
+
+      /* ================= DESIGN 4 — ROYAL PREMIUM ================= */
+      .demo-4 {
+        --head-font: "Playfair Display", serif; --body-font: "Catamaran", sans-serif;
+        --bg: #faf6ec; --panel: #fffdf6; --card: #fffdf6; --chip: #f3ead2;
+        --ink: #2b2118; --muted: #87765a; --accent: #a37f24; --accent2: #7c5c14;
+        --on-accent: #fffaf0; --line: #ddc98f; --land: #b3a06a; --radius: 4px;
+      }
+      html[data-eye="dark"] .demo-4 { --bg: #16120d; --panel: #1f1a13; --card: #1f1a13; --chip: #2b2417; --ink: #f3ead6; --muted: #b3a586; --accent: #d9b45c; --accent2: #d9b45c; --line: #4a3f2a; --land: #6d5c33; }
+      html[data-eye="care"] .demo-4 { --bg: #f7efdb; --ink: #46371f; --muted: #8a744c; --accent: #96700f; --line: #e0cd97; }
+      .demo-4 .wrap { max-width: 880px; padding-top: 52px; }
+      .demo-4 .hero .brandline { font-weight: 700; letter-spacing: .01em; }
+      .demo-4 .hero .brandline .gold { font-style: italic; }
+      .demo-4 .sec-head { text-align: center; }
+      .demo-4 .sec-head p { margin-left: auto; margin-right: auto; }
+      .demo-4 .sec-head h2::after { content: ""; display: block; width: 64px; height: 2px; background: var(--accent); margin: 12px auto 0; }
+      .demo-4 .map-panel, .demo-4 .launch { border: 1px solid var(--line); outline: 1px solid var(--line); outline-offset: 5px; box-shadow: none; }
+      .demo-4 .class-card, .demo-4 .voice-card, .demo-4 .price-card { border: 1px solid var(--line); outline: 1px solid var(--line); outline-offset: 3px; box-shadow: none; }
+      .demo-4 .class-card { text-align: center; padding: 26px 18px 22px; }
+      .demo-4 .class-card .cc-icon { margin: 0 auto 14px; background: transparent; border: 1px solid var(--line); border-radius: 50%; }
+      .demo-4 .class-card .go { letter-spacing: .1em; text-transform: uppercase; font-size: 12.5px; }
+      .demo-4 .pin i { box-shadow: 0 0 0 3px var(--panel); }
+      .demo-4 .pin i::after { animation: none; display: none; }
+      .demo-4 .country-chips { justify-content: center; }
+      .demo-4 .country-chips span { border-radius: 2px; letter-spacing: .05em; }
+      .demo-4 .launch .l-kicker { letter-spacing: .3em; }
+      .demo-4 .demo-fade { animation: demoIn 1.1s ease both; }
+
+      /* ================= DESIGN 5 — BRIGHT KIDS JOY ================= */
+      .demo-5 {
+        --head-font: "Baloo Thambi 2", cursive; --body-font: "Catamaran", sans-serif;
+        --bg: #e8f6ff; --panel: #ffffff; --card: #ffffff; --chip: #eef7ff;
+        --ink: #21314d; --muted: #5c6f8f; --accent: #ff7a59; --accent2: #2bb3a3;
+        --on-accent: #ffffff; --line: #cfe6f7; --land: #57b96a; --radius: 30px;
+        background:
+          radial-gradient(340px 200px at 12% 6%, rgba(255, 201, 60, .35), transparent 65%),
+          radial-gradient(420px 260px at 92% 22%, rgba(255, 107, 157, .20), transparent 65%),
+          radial-gradient(460px 300px at 50% 105%, rgba(43, 179, 163, .20), transparent 65%),
+          var(--bg);
+      }
+      html[data-eye="dark"] .demo-5 { --bg: #0f1c33; --panel: #1a2a4a; --card: #1d2f52; --chip: #263c66; --ink: #f2f7ff; --muted: #a9bce0; --line: #33507f; --land: #3f9e57; }
+      html[data-eye="care"] .demo-5 { --bg: #f8efdb; --panel: #fffaf0; --card: #fffaf0; --chip: #f6ead0; --ink: #453a26; --muted: #8a795a; --accent: #d95f36; --accent2: #7d8a3a; --line: #e6d3a4; --land: #84ad72; }
+      .demo-5 .hero .brandline { letter-spacing: .01em; }
+      .demo-5 .map-panel { border: 3px solid var(--line); box-shadow: 0 16px 0 -6px rgba(33, 49, 77, .08), 0 22px 38px rgba(33, 49, 77, .12); }
+      .demo-5 .class-card { border: 3px solid var(--line); padding: 22px 18px 18px; box-shadow: 0 10px 0 -4px rgba(33, 49, 77, .10); animation: floaty 6s ease-in-out infinite; }
+      .demo-5 .class-card:nth-child(1) { background: #fff4ec; border-color: #ffd9c4; transform: rotate(-1.2deg); }
+      .demo-5 .class-card:nth-child(2) { background: #fff8db; border-color: #f3df8e; animation-delay: -1.2s; }
+      .demo-5 .class-card:nth-child(3) { background: #e9faf3; border-color: #a9e6c8; transform: rotate(1.1deg); animation-delay: -2.4s; }
+      .demo-5 .class-card:nth-child(4) { background: #eaf4ff; border-color: #b3d7f7; animation-delay: -3.6s; }
+      .demo-5 .class-card:nth-child(5) { background: #ffeef5; border-color: #ffc2d6; transform: rotate(-1deg); animation-delay: -4.8s; }
+      html[data-eye="dark"] .demo-5 .class-card:nth-child(1) { background: #3a2a20; border-color: #7a4a30; }
+      html[data-eye="dark"] .demo-5 .class-card:nth-child(2) { background: #38331c; border-color: #7a6c2c; }
+      html[data-eye="dark"] .demo-5 .class-card:nth-child(3) { background: #1d3a2c; border-color: #2f6b47; }
+      html[data-eye="dark"] .demo-5 .class-card:nth-child(4) { background: #1d3050; border-color: #33598c; }
+      html[data-eye="dark"] .demo-5 .class-card:nth-child(5) { background: #3a2233; border-color: #7a4066; }
+      html[data-eye="care"] .demo-5 .class-card { background: var(--card); border-color: var(--line); }
+      .demo-5 .class-card h3 { font-size: 23px; }
+      .demo-5 .class-card .cc-icon { width: 56px; height: 56px; border-radius: 20px; }
+      .demo-5 .class-card:nth-child(1) .cc-icon { background: #ff7a59; color: #fff; }
+      .demo-5 .class-card:nth-child(2) .cc-icon { background: #ffc93c; color: #4a3503; }
+      .demo-5 .class-card:nth-child(3) .cc-icon { background: #2bb3a3; color: #fff; }
+      .demo-5 .class-card:nth-child(4) .cc-icon { background: #4d9de0; color: #fff; }
+      .demo-5 .class-card:nth-child(5) .cc-icon { background: #ff6b9d; color: #fff; }
+      .demo-5 .voice-card, .demo-5 .price-card { border: 3px solid var(--line); box-shadow: 0 10px 0 -4px rgba(33, 49, 77, .10); }
+      .demo-5 .play-btn { border: 3px solid var(--line); }
+      .demo-5 .launch { border: 3px dashed var(--accent); background: linear-gradient(120deg, rgba(255, 201, 60, .25), rgba(255, 107, 157, .16)), var(--panel); }
+      .demo-5 .pin b { border-width: 2px; }
+      .demo-5 .sparkle { position: absolute; color: var(--accent); opacity: .8; animation: floaty 5s ease-in-out infinite; pointer-events: none; }
+    </style>
+    <style>
+      /* ---------- Scene imagery (same art, framed per design) ---------- */
+      .class-card { --card-pt: 18px; --card-px: 16px; }
+      .demo-2 .class-card { --card-pt: 24px; }
+      .demo-4 .class-card { --card-pt: 26px; --card-px: 18px; }
+      .demo-5 .class-card { --card-pt: 22px; --card-px: 18px; }
+      .class-card .cc-art { margin: calc(-1 * var(--card-pt)) calc(-1 * var(--card-px)) 14px; height: 118px; overflow: hidden; border-radius: calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0 0; }
+      .class-card .cc-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .demo-2 .class-card .cc-art { border-radius: 46px 46px 0 0; border-bottom: 3px solid #e9cf87; }
+      .demo-4 .class-card .cc-art img { filter: sepia(.16) saturate(.94); }
+      .demo-3 .class-card .cc-art img { filter: saturate(1.06) contrast(1.03); }
+      .demo-5 .class-card .cc-art img { filter: saturate(1.12); }
+
+      .countries { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 14px; }
+      .country-card { position: relative; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; min-height: 196px; background: var(--panel); }
+      .country-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+      .country-card .c-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 15px 11px; background: linear-gradient(transparent, rgba(3, 12, 9, .80)); color: #fff; }
+      .country-card .c-name b { font-family: var(--head-font); font-size: 20px; font-weight: 800; display: block; line-height: 1.1; text-shadow: 0 1px 10px rgba(0, 0, 0, .55); }
+      .country-card .c-name b .ta { color: var(--accent); font-size: 15px; }
+      .country-card .c-name span { font-size: 13.5px; font-weight: 600; opacity: .94; }
+      .demo-2 .country-card { border: 3px solid var(--accent); box-shadow: 0 14px 28px rgba(0, 0, 0, .35); }
+      .demo-3 .country-card { clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px); border-radius: 0; box-shadow: 0 0 22px rgba(94, 245, 200, .10); }
+      html[data-eye="light"] .demo-3 .country-card, html[data-eye="care"] .demo-3 .country-card { box-shadow: 0 10px 22px rgba(20, 40, 34, .14); }
+      .demo-4 .country-card { outline: 1px solid var(--line); outline-offset: 3px; }
+      .demo-4 .country-card img { filter: sepia(.16) saturate(.94); }
+      .demo-5 .country-card { border: 3px solid var(--line); box-shadow: 0 10px 0 -4px rgba(33, 49, 77, .10); }
+      .demo-5 .country-card img { filter: saturate(1.12); }
+      .demo-1 .country-card { box-shadow: 0 14px 30px rgba(0, 0, 0, .35); }
+    </style>
+    <style>
+      /* ---------- Tap-to-zoom map journey (same flow, each design's own colours) ---------- */
+      .crumb-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 2px 0 10px; }
+      .back-btn {
+        min-height: 40px; padding: 7px 15px; border-radius: 999px; flex: 0 0 auto;
+        border: 1.5px solid var(--line); background: var(--chip); color: var(--ink);
+        font-weight: 700; font-size: 14px; transition: opacity .2s, transform .15s;
+      }
+      .back-btn:active { transform: scale(.96); }
+      .back-btn[disabled] { opacity: .38; cursor: default; }
+      .crumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
+      .crumb-btn {
+        background: none; border: none; padding: 7px 5px; min-height: 40px;
+        color: var(--muted); font-weight: 700; font-size: 14.5px; border-radius: 8px;
+      }
+      .crumb-btn.current { color: var(--accent); }
+      .crumb-sep { color: var(--muted); font-size: 13px; padding: 0 1px; }
+      .zoom-stage { aspect-ratio: 2 / 1; }
+      .zoom-view {
+        position: absolute; inset: 0; opacity: 0; pointer-events: none;
+        transform: scale(.93);
+        transition: opacity .38s ease, transform .55s cubic-bezier(.25, .8, .3, 1);
+      }
+      .zoom-view.is-past { transform: scale(1.14); }
+      .zoom-view.is-active { opacity: 1; transform: scale(1); pointer-events: auto; }
+      .zoom-view[hidden] { display: none !important; }
+      .zoom-view > div:first-child, .zoom-view > div:first-child svg { width: 100%; height: 100%; }
+      .zoom-view svg text { font-family: var(--body-font); font-weight: 700; fill: var(--ink); }
+      .zoom-view svg .st-label { font-size: 19px; }
+      .zoom-view svg .st-small { font-size: 15.5px; fill: var(--muted); }
+      .zoom-view svg .region { fill: var(--land); stroke: var(--line); stroke-width: 2; }
+      .zoom-view svg .region-hl { fill: var(--accent); stroke: var(--line); stroke-width: 2; }
+      .zoom-view svg .boundary { fill: none; stroke: var(--panel); stroke-width: 1.6; opacity: .55; }
+      .zoom-view svg .citydot { fill: var(--panel); stroke: var(--accent); stroke-width: 2.5; }
+      .zoom-view svg .sea-label { font-size: 16px; font-style: italic; fill: var(--muted); opacity: .85; }
+      .pin-btn, .hotspot, .school-pin { pointer-events: auto; background: none; border: none; padding: 0; font: inherit; }
+      .pin-btn { z-index: 3; }
+      .pin-btn b, .hotspot b { transition: transform .15s; }
+      .pin-btn:active b, .hotspot:active b { transform: scale(.94); }
+      .hotspot { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 6px; z-index: 3; }
+      .hotspot i { width: 17px; height: 17px; border-radius: 50%; background: var(--accent); border: 3px solid var(--panel); display: block; position: relative; flex: 0 0 auto; }
+      .hotspot i::after { content: ""; position: absolute; inset: -11px; border-radius: 50%; border: 2px solid var(--accent); opacity: .55; animation: pinPulse 2.2s ease-out infinite; }
+      .hotspot b { font-size: 13px; font-weight: 800; background: var(--accent); border: 1px solid var(--accent); color: var(--on-accent); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+      .area-label {
+        position: absolute; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap;
+        font-size: 12.5px; font-weight: 700; color: var(--ink);
+        background: color-mix(in srgb, var(--panel) 85%, transparent);
+        border: 1px solid var(--line); padding: 2.5px 9px; border-radius: 999px;
+      }
+      .school-pin { position: absolute; transform: translate(-50%, -50%); z-index: 3; width: 34px; height: 34px; display: grid; place-items: center; }
+      .school-pin i { width: 16px; height: 16px; border-radius: 50%; background: var(--accent2); border: 3px solid var(--panel); display: block; position: relative; transition: transform .15s; }
+      .school-pin i::after { content: ""; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid var(--accent2); opacity: .5; animation: pinPulse 2.6s ease-out infinite; }
+      .school-pin:active i, .school-pin.picked i { transform: scale(1.3); background: var(--accent); }
+      .school-card {
+        position: absolute; left: 12px; bottom: 12px; z-index: 6; text-align: left;
+        width: min(302px, calc(100% - 24px));
+        background: var(--panel); color: var(--ink);
+        border: 1.5px solid var(--accent); border-radius: calc(var(--radius) - 4px);
+        padding: 14px 15px 13px; box-shadow: 0 18px 38px rgba(0, 0, 0, .35);
+        animation: scIn .3s ease both;
+      }
+      @keyframes scIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+      .school-card .sc-tag { font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+      .school-card h4 { font-family: var(--head-font); font-size: 18.5px; font-weight: 800; line-height: 1.2; margin: 4px 26px 0 0; }
+      .school-card .sc-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--muted); }
+      .school-card .sc-type { background: var(--accent); color: var(--on-accent); font-weight: 800; font-size: 12.5px; padding: 3px 10px; border-radius: 999px; }
+      .school-card .sc-register {
+        margin-top: 12px; width: 100%; min-height: 46px; border: none; border-radius: 10px;
+        background: var(--accent); color: var(--on-accent); font-weight: 800; font-size: 15px;
+      }
+      .school-card .sc-register:active { transform: scale(.98); }
+      .school-card .sc-note { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+      .school-card .sc-close {
+        position: absolute; top: 6px; right: 6px; width: 34px; height: 34px; border-radius: 50%;
+        border: 1px solid var(--line); background: var(--chip); color: var(--ink); font-size: 17px; line-height: 1;
+      }
+      .country-chips button.chip {
+        font: inherit; font-size: 14px; font-weight: 600; border: 1px solid var(--line);
+        color: var(--ink); padding: 7px 14px; border-radius: 999px; background: var(--chip);
+      }
+      .country-chips button.chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 700; }
+      .demo-3 .country-chips button.chip, .demo-3 .hotspot b, .demo-3 .area-label { border-radius: 3px; letter-spacing: .04em; }
+      .demo-3 .back-btn, .demo-3 .school-card .sc-register { border-radius: 4px; }
+      .demo-4 .country-chips button.chip { border-radius: 2px; letter-spacing: .05em; }
+      .demo-5 .country-chips button.chip, .demo-5 .area-label, .demo-5 .hotspot b { border-width: 2px; }
+      .preview-note { margin-top: 10px; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+      .pin-btn:focus-visible, .hotspot:focus-visible, .school-pin:focus-visible,
+      .crumb-btn:focus-visible, .back-btn:focus-visible, .country-chips button.chip:focus-visible {
+        outline: 2px solid var(--accent); outline-offset: 2px;
+      }
+
+      /* ---------- Watercolor world — deep teal sea, every region its own vivid colour ---------- */
+      .zoom-stage {
+        background:
+          radial-gradient(130% 120% at 50% -10%, rgba(64, 224, 255, .28), transparent 55%),
+          radial-gradient(90% 90% at 82% 110%, rgba(23, 181, 165, .22), transparent 60%),
+          linear-gradient(160deg, #0a5a74 0%, #063e55 42%, #032635 78%, #021a26 100%);
+        box-shadow: inset 0 0 64px rgba(64, 224, 255, .16), inset 0 0 0 1px rgba(125, 230, 255, .18);
+        border-radius: calc(var(--radius) - 4px);
+        overflow: hidden;
+      }
+      .demo-3 .zoom-stage { border-radius: 2px; }
+      .zoom-view svg text.c-label {
+        fill: #14313d; font-size: 15px; font-weight: 800; letter-spacing: .02em;
+        paint-order: stroke; stroke: rgba(255, 255, 255, .38); stroke-width: 2.6px; stroke-linejoin: round;
+      }
+      .zoom-view svg text.c-small {
+        fill: #14313d; font-size: 11.5px; font-weight: 700;
+        paint-order: stroke; stroke: rgba(255, 255, 255, .35); stroke-width: 2.2px; stroke-linejoin: round;
+      }
+      .zoom-view svg text.ocean-label {
+        fill: #93e6f5; font-size: 13px; font-style: italic; font-weight: 600; letter-spacing: .16em; opacity: .85;
+      }
+      .zoom-view svg text.compass-t { fill: #a5eaf7; font-size: 11px; font-weight: 800; }
+      .zoom-view svg text.sea-label { fill: #a5e9f7; }
+      .zoom-view svg .st-label, .zoom-view svg .st-small {
+        paint-order: stroke; stroke: rgba(6, 40, 54, .42); stroke-width: 3px; stroke-linejoin: round;
+      }
+      /* Modern infographic pins — teardrop markers with a soft shadow */
+      .pin i {
+        width: 17px; height: 17px; border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg); box-shadow: 0 3px 10px rgba(0, 25, 35, .45);
+      }
+      .pin b { box-shadow: 0 5px 16px rgba(0, 25, 35, .35); }
+      .hotspot i {
+        width: 19px; height: 19px; border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg); box-shadow: 0 3px 10px rgba(0, 25, 35, .45);
+      }
+      .school-pin i {
+        width: 17px; height: 17px; border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg); box-shadow: 0 3px 10px rgba(0, 25, 35, .45);
+      }
+      .school-pin:active i, .school-pin.picked i { transform: rotate(-45deg) scale(1.3); }
+    </style>
+    <style>
+      /* ---------- Cascade region picker — beside the tappable map (Nexus entry method) ---------- */
+      .map-grid { display: grid; grid-template-columns: minmax(0, 1fr) 302px; gap: 18px; align-items: start; }
+      .map-main { min-width: 0; }
+      .region-picker { background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--radius) - 4px); padding: 16px 16px 14px; }
+      .region-picker .picker-title { font-family: var(--head-font); font-size: 18px; font-weight: 800; line-height: 1.2; }
+      .region-picker .picker-title .ta { color: var(--accent); font-size: 14.5px; }
+      .picker-sub { color: var(--muted); font-size: 13.5px; line-height: 1.45; margin-top: 5px; }
+      .picker-field { margin-top: 12px; }
+      .picker-field label { display: block; font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+      .picker-field label .en { color: var(--muted); font-weight: 600; }
+      .picker-field select { width: 100%; min-height: 48px; padding: 10px 11px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--chip); color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 600; }
+      .picker-field select:focus-visible, .picker-go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .picker-go { margin-top: 16px; width: 100%; min-height: 52px; border: none; border-radius: 12px; background: linear-gradient(135deg, #ffd35c, #f5a623); color: #231a02; font-weight: 800; font-size: 15.5px; padding: 9px 12px; box-shadow: 0 10px 22px rgba(245, 166, 35, .28); }
+      .picker-go:active { transform: scale(.98); }
+      .picker-go .ta { display: block; font-size: 12.5px; font-weight: 700; opacity: .85; }
+      .picker-status { margin-top: 10px; font-size: 13px; line-height: 1.45; color: var(--muted); min-height: 18px; }
+      .picker-status strong { color: var(--ink); }
+      .demo-2 .region-picker { color: #2c2413; border: 2.5px solid #e9cf87; }
+      .demo-2 .region-picker .picker-title { color: #173f3a; }
+      .demo-2 .region-picker .picker-sub, .demo-2 .region-picker .picker-status { color: #6d6046; }
+      .demo-2 .picker-field label { color: #2c2413; }
+      .demo-2 .picker-field label .en { color: #6d6046; }
+      .demo-2 .picker-field select { background: #fffaf0; color: #2c2413; border-color: #e9cf87; }
+      .demo-2 .picker-status strong { color: #173f3a; }
+      .demo-3 .region-picker { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); border-radius: 2px; }
+      .demo-3 .picker-go, .demo-3 .picker-field select { border-radius: 4px; }
+      .demo-4 .region-picker { outline: 1px solid var(--line); outline-offset: 3px; box-shadow: none; }
+      .demo-4 .picker-go, .demo-4 .picker-field select { border-radius: 2px; }
+      .demo-5 .region-picker { border-width: 3px; box-shadow: 0 10px 0 -4px rgba(33, 49, 77, .10); }
+      .demo-5 .picker-go, .demo-5 .picker-field select { border-radius: 16px; }
+      @media (max-width: 900px) { .map-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-title">
+          <h1>WES Design Demos <span class="ta">· வடிவமைப்பு மாதிரிகள்</span></h1>
+          <p>Tap a design to preview it · ஒவ்வொன்றையும் தட்டிப் பாருங்கள்</p>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="Choose a design">
+          <button class="tab" role="tab" data-design="1" aria-selected="true"><span class="num">1</span><span class="tname">Living World<span class="tta">வாழும் உலகம்</span></span></button>
+          <button class="tab" role="tab" data-design="2" aria-selected="false"><span class="num">2</span><span class="tname">Storybook<span class="tta">கதைப் புத்தகம்</span></span></button>
+          <button class="tab" role="tab" data-design="3" aria-selected="false"><span class="num">3</span><span class="tname">Hologram<span class="tta">ஹாலோகிராம்</span></span></button>
+          <button class="tab" role="tab" data-design="4" aria-selected="false"><span class="num">4</span><span class="tname">Royal Premium<span class="tta">அரச பிரீமியம்</span></span></button>
+          <button class="tab" role="tab" data-design="5" aria-selected="false"><span class="num">5</span><span class="tname">Bright Kids<span class="tta">குழந்தைகள் மகிழ்ச்சி</span></span></button>
+        </nav>
+        <div class="eyebar" role="group" aria-label="Eye comfort">
+          <span class="eye-label">Eye comfort · கண் நலம்</span>
+          <button class="eye-btn" data-eye="light" aria-pressed="false">Light <span class="ta">ஒளி</span></button>
+          <button class="eye-btn" data-eye="dark" aria-pressed="true">Dark <span class="ta">இருள்</span></button>
+          <button class="eye-btn" data-eye="care" aria-pressed="false">Eye-care <span class="ta">கண் பாதுகாப்பு</span></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="stage">
+      <section class="demo demo-1 active" data-natural="dark" aria-label="Design 1 — Living World"></section>
+      <section class="demo demo-2" data-natural="dark" aria-label="Design 2 — Storybook Cinema"></section>
+      <section class="demo demo-3" data-natural="dark" aria-label="Design 3 — Hologram Grand"></section>
+      <section class="demo demo-4" data-natural="light" aria-label="Design 4 — Royal Premium"></section>
+      <section class="demo demo-5" data-natural="light" aria-label="Design 5 — Bright Kids Joy"></section>
+    </main>
+
+    <script>
+      /* ---------- Shared content (identical in every design) ---------- */
+      var ICONS = {
+        sprout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-8"/><path d="M12 13c0-3.5-2.6-5.5-6.5-5.5C5.5 11 8 13.5 12 13z"/><path d="M12 11c0-3.5 2.6-5.5 6.5-5.5C18.5 9 16 11.5 12 11z"/></svg>',
+        book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.8-1.4-4-2-7-2v14c3 0 5.2.6 7 2 1.8-1.4 4-2 7-2V4c-3 0-5.2.6-7 2z"/><path d="M12 6v14"/></svg>',
+        globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.7 2.6 4 5.6 4 9s-1.3 6.4-4 9c-2.7-2.6-4-5.6-4-9s1.3-6.4 4-9z"/></svg>',
+        steps: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4v-5h4v-5h4V5h4"/><path d="M4 20h16" opacity=".45"/></svg>',
+        cap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z"/><path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"/><path d="M21.5 9.5V15"/></svg>',
+        arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M13 5l7 7-7 7"/></svg>',
+        play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.8v14.4c0 .9 1 1.5 1.8 1L20 13a1.15 1.15 0 0 0 0-2L8.8 3.9C8 3.4 7 4 7 4.8z"/></svg>',
+        star: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
+      };
+
+      var CLASSES = [
+        { img: "scene-study.jpg", alt: "Young children happily studying together around a glowing storybook", en: "Pre-KG", ta: "முன்பள்ளி", desc: "Songs, play and first words — learning that feels like fun." },
+        { img: "scene-library.jpg", alt: "Children reading together in a warm, magical library", en: "Class 1", ta: "வகுப்பு 1", desc: "Reading, numbers and stories, one small step at a time." },
+        { img: "scene-lab.jpg", alt: "Children checking a small volcano experiment in a calm science corner", en: "Class 6", ta: "வகுப்பு 6", desc: "Science, maths and the wider world, told as stories." },
+        { img: "scene-globe.jpg", alt: "Older students studying together around a glowing globe of the Earth", en: "Class 10", ta: "வகுப்பு 10", desc: "Board-ready lessons, step by step, with no fear." },
+        { img: "scene-future.jpg", alt: "Senior students with books looking toward a golden sunrise path", en: "Class 12", ta: "வகுப்பு 12", desc: "Final boards plus the first steps into careers." }
+      ];
+
+      var COUNTRIES = [
+        { img: "country-india.jpg", alt: "Indian schoolchildren studying in a bright classroom with a mango tree outside the window", en: "India", ta: "हिन्दी · English · தமிழ்", note: "Mango-tree classrooms" },
+        { img: "country-canada.jpg", alt: "Children reading by a classroom window with snow falling outside", en: "Canada", ta: "English · Français", note: "Reading by snowy windows" },
+        { img: "country-japan.jpg", alt: "Japanese schoolchildren reading together with cherry blossom outside the window", en: "Japan", ta: "日本語", note: "Cherry-blossom reading time" },
+        { img: "country-brazil.jpg", alt: "Brazilian children learning in a bright classroom with tropical plants and a toucan outside", en: "Brazil", ta: "Português", note: "Jungle-green classrooms" },
+        { img: "country-egypt.jpg", alt: "Egyptian schoolchildren studying with golden desert light and a palm tree outside", en: "Egypt", ta: "العربية", note: "Golden desert light" },
+        { img: "country-kenya.jpg", alt: "Kenyan schoolchildren reading together with an acacia tree and savanna outside the window", en: "Kenya", ta: "Kiswahili · English", note: "Under the acacia tree" }
+      ];
+
+      var PINS = [
+        { x: 21, y: 24, label: "Canada" },
+        { x: 45.5, y: 19, label: "UK" },
+        { x: 67.5, y: 44, label: "India" },
+        { x: 89, y: 30, label: "Japan" },
+        { x: 30, y: 69, label: "Brazil" },
+        { x: 85.5, y: 71, label: "Australia" }
+      ];
+      var CHIPS = ["Canada", "India", "United Kingdom", "Japan", "Australia", "Brazil", "UAE", "Singapore"];
+
+      var SCHOOLS = [
+        { name: "Govt. Higher Secondary School", type: "Government", area: "T. Nagar" },
+        { name: "Little Scholars Matriculation School", type: "Private", area: "Anna Nagar" },
+        { name: "Velachery Public School", type: "Private", area: "Velachery" },
+        { name: "Govt. High School", type: "Government", area: "Tambaram" }
+      ];
+      var SCHOOL_POS = [
+        { x: 50, y: 46 }, { x: 41.1, y: 20.7 }, { x: 56.7, y: 69.6 }, { x: 37.5, y: 76.2 }
+      ];
+
+      function demoHTML(n, name) {
+        var pins = PINS.map(function (p) {
+          if (p.label === "India") {
+            return '<button type="button" class="pin pin-btn" style="left:' + p.x + '%;top:' + p.y + '%" data-go="1" aria-label="Step into India"><i></i><b>' + p.label + '</b></button>';
+          }
+          return '<span class="pin" style="left:' + p.x + '%;top:' + p.y + '%"><i></i><b>' + p.label + '</b></span>';
+        }).join("");
+        var chips = CHIPS.map(function (c, i) {
+          if (c === "India") {
+            return '<button type="button" class="chip on" data-go="1">India</button>';
+          }
+          return '<span class="' + (i < 2 ? "on" : "") + '">' + c + '</span>';
+        }).join("");
+        var tnPins = [
+          { x: 55.7, y: 48.9, label: "Thanjavur" },
+          { x: 43.8, y: 76.1, label: "Madurai" },
+          { x: 31.8, y: 55.7, label: "Coimbatore" }
+        ].map(function (p) {
+          return '<span class="pin" style="left:' + p.x + '%;top:' + p.y + '%"><i></i><b>' + p.label + '</b></span>';
+        }).join("");
+        var areaLabels = [
+          { x: 38.3, y: 25.6, label: "Anna Nagar" },
+          { x: 47.2, y: 52.7, label: "T. Nagar" },
+          { x: 53.9, y: 78.4, label: "Velachery" },
+          { x: 35, y: 84.2, label: "Tambaram" }
+        ].map(function (a) {
+          return '<span class="area-label" style="left:' + a.x + '%;top:' + a.y + '%">' + a.label + '</span>';
+        }).join("");
+        var schoolPins = SCHOOLS.map(function (s, i) {
+          var pos = SCHOOL_POS[i];
+          return '<button type="button" class="school-pin" style="left:' + pos.x + '%;top:' + pos.y + '%" data-school="' + i + '" aria-label="See ' + s.name + ', ' + s.area + '"><i></i></button>';
+        }).join("");
+        var cards = CLASSES.map(function (c) {
+          return '<article class="class-card">' +
+            '<figure class="cc-art"><img src="assets/' + c.img + '" alt="' + c.alt + '" loading="lazy" /></figure>' +
+            '<h3>' + c.en + '</h3><p class="ta">' + c.ta + '</p>' +
+            '<p class="desc">' + c.desc + '</p>' +
+            '<span class="go">Start learning ' + ICONS.arrow + '</span></article>';
+        }).join("");
+        var countryCards = COUNTRIES.map(function (c) {
+          return '<article class="country-card">' +
+            '<img src="assets/' + c.img + '" alt="' + c.alt + '" loading="lazy" />' +
+            '<div class="c-name"><b>' + c.en + ' <span class="ta">· ' + c.ta + '</span></b><span>' + c.note + '</span></div></article>';
+        }).join("");
+        var sparkles = n === 5
+          ? '<span class="sparkle" style="left:6%;top:110px">' + ICONS.star + '</span>' +
+            '<span class="sparkle" style="right:7%;top:64px;animation-delay:-2s;color:var(--accent2)">' + ICONS.star + '</span>' +
+            '<span class="sparkle" style="right:14%;top:210px;animation-delay:-3.4s;color:#ff6b9d">' + ICONS.star + '</span>'
+          : "";
+        var orbits = n === 3 ? '<span class="orbit o1"></span><span class="orbit o2"></span>' : "";
+        var pickerHTML =
+          '<aside class="region-picker" aria-label="Region picker">' +
+            '<h3 class="picker-title">Pick your region <span class="ta">· பிராந்தியத் தேர்வு</span></h3>' +
+            '<p class="picker-sub">Choose below, or tap the map — both doors lead inside.</p>' +
+            '<div class="picker-field"><label for="pk-country-' + n + '">நாடு <span class="en">· Country</span></label>' +
+              '<select id="pk-country-' + n + '" class="pk-country">' +
+                '<option value="india">இந்தியா (India)</option>' +
+                '<option value="canada">கனடா (Canada)</option>' +
+                '<option value="china">சீனா (China)</option>' +
+                '<option value="other">மற்ற நாடுகள் (Other countries)</option>' +
+              '</select></div>' +
+            '<div class="picker-field"><label for="pk-state-' + n + '">மாநிலம் <span class="en">· State / Province</span></label>' +
+              '<select id="pk-state-' + n + '" class="pk-state"></select></div>' +
+            '<div class="picker-field"><label for="pk-district-' + n + '">ஊர் <span class="en">· District / Town</span></label>' +
+              '<select id="pk-district-' + n + '" class="pk-district"></select></div>' +
+            '<div class="picker-field pk-village-wrap" hidden><label for="pk-village-' + n + '">கிராமம் <span class="en">· Village / Area — Thanjavur</span></label>' +
+              '<select id="pk-village-' + n + '" class="pk-village">' +
+                '<option value="">Thanjavur town · தஞ்சாவூர் நகரம்</option>' +
+                '<option value="mallipattinam">Mallipattinam · மல்லிப்பட்டினம்</option>' +
+                '<option value="kollukadu">Kollukadu · கொல்லுக்காடு</option>' +
+              '</select></div>' +
+            '<button type="button" class="picker-go" data-picker-go>Go inside this region<span class="ta">உள்ளே செல்லுங்கள்</span></button>' +
+            '<p class="picker-status" aria-live="polite"></p>' +
+          '</aside>';
+
+        return '<div class="wrap">' + sparkles +
+          '<div class="hero">' +
+            '<h2 class="brandline">FARFAZ <span class="gold">— One World —</span><br />Education System For Ever</h2>' +
+            '<p class="brand-ta">ஒரே உலகம் · எல்லோருக்கும் கல்வி · எப்போதும்</p>' +
+            '<p class="welcome">Welcome to the <strong>World Education System</strong> — every lesson, in your own language, in a voice you choose. <strong>உங்கள் மொழியில், உங்கள் குரலில் கற்றுக்கொள்ளுங்கள்.</strong></p>' +
+          '</div>' +
+
+          '<section class="map-panel film">' + orbits +
+            '<div class="map-top"><h2>Start with the world <span class="ta">· உலகத்திலிருந்து தொடங்குங்கள்</span></h2><span class="map-hint-top">Tap INDIA to step inside</span></div>' +
+            '<div class="map-grid"><div class="map-main">' +
+            '<div class="crumb-bar"><button type="button" class="back-btn" data-back disabled>&#8592; Back</button><nav class="crumbs" aria-label="Map path"></nav></div>' +
+            '<div class="map-wrap zoom-stage">' +
+              '<div class="zoom-view zv-world is-active" data-view="0"><div class="map-slot"></div>' + pins + '</div>' +
+              '<div class="zoom-view zv-india" data-view="1" hidden><div class="india-slot"></div>' +
+                '<button type="button" class="hotspot" style="left:50.3%;top:81.6%" data-go="2" aria-label="Step into Tamil Nadu"><i></i><b>Tamil Nadu · தமிழ்நாடு</b></button></div>' +
+              '<div class="zoom-view zv-tn" data-view="2" hidden><div class="tn-slot"></div>' + tnPins +
+                '<button type="button" class="hotspot" style="left:65.7%;top:18.2%" data-go="3" aria-label="Step into Chennai"><i></i><b>Chennai · சென்னை</b></button></div>' +
+              '<div class="zoom-view zv-chennai" data-view="3" hidden><div class="chennai-slot"></div>' + areaLabels + schoolPins +
+                '<div class="school-card" hidden>' +
+                  '<button type="button" class="sc-close" data-close aria-label="Close school card">&times;</button>' +
+                  '<p class="sc-tag">Preview sample</p><h4 class="sc-name"></h4>' +
+                  '<p class="sc-meta"><span class="sc-type"></span><span class="sc-area"></span></p>' +
+                  '<button type="button" class="sc-register" data-register>Register / Link my ID</button>' +
+                  '<p class="sc-note" hidden>Preview — registration opens in the app.</p>' +
+                '</div></div>' +
+            '</div>' +
+            '<div class="country-chips">' + chips + '</div>' +
+            '<p class="preview-note">Preview — the full journey with real school data is being built in the app</p>' +
+            '</div>' + pickerHTML + '</div>' +
+          '</section>' +
+
+          '<div class="sec-head"><h2>Every country, its own classroom <span class="ta">· ஒவ்வொரு நாட்டுக்கும் அதன் வகுப்பறை</span></h2>' +
+          '<p>Step into a country and its lessons feel like home — its places, its seasons, its stories.</p></div>' +
+          '<div class="countries">' + countryCards + '</div>' +
+
+          '<div class="sec-head"><h2>Choose your class <span class="ta">· உங்கள் வகுப்பு</span></h2>' +
+          '<p>From first songs to final boards — every class learns by story, voice and pictures.</p></div>' +
+          '<div class="classes">' + cards + '</div>' +
+
+          '<div class="sec-head"><h2>Two voices, your choice <span class="ta">· இரண்டு குரல்கள்</span></h2>' +
+          '<p>Every lesson is spoken aloud. Pick the voice you love — it stays yours in every lesson.</p></div>' +
+          '<div class="voices">' +
+            '<article class="voice-card v1"><span class="avatar">N</span><div><h3>Nisa</h3><p>Ladies voice · பெண் குரல்<br />Warm and gentle, for every age.</p></div><button class="play-btn" type="button" aria-label="Hear Nisa">' + ICONS.play + '</button></article>' +
+            '<article class="voice-card v2"><span class="avatar">A</span><div><h3>Arshed</h3><p>Gents voice · ஆண் குரல்<br />Clear and friendly, for every age.</p></div><button class="play-btn" type="button" aria-label="Hear Arshed">' + ICONS.play + '</button></article>' +
+          '</div>' +
+
+          '<section class="launch film">' +
+            '<p class="l-kicker">Grand Launch <span class="ta">· பெரும் தொடக்க விழா</span></p>' +
+            '<h2>Monday 23 November 2026</h2>' +
+            '<p>The whole world opens its classroom doors — one day, every country, every learner.</p>' +
+          '</section>' +
+
+          '<div class="sec-head"><h2>Plans for everyone <span class="ta">· அனைவருக்கும் திட்டங்கள்</span></h2>' +
+          '<p>India prices — a plan for every learner, family, school, teacher and career.</p></div>' +
+          '<div class="prices">' +
+            '<article class="price-card"><p class="p-name">Student <span class="ta">· மாணவர்</span></p><p class="p-amt">₹249<small> /month</small></p><p class="p-note">₹2,499/year · All classes, both voices, every lesson.</p></article>' +
+            '<article class="price-card"><p class="p-name">Family <span class="ta">· குடும்பம்</span></p><p class="p-amt">₹499<small> /month</small></p><p class="p-note">₹4,999/year · For parents and children learning together.</p></article>' +
+            '<article class="price-card"><p class="p-name">Schools <span class="ta">· பள்ளிகள்</span></p><p class="p-amt">₹30<small> /student /month</small></p><p class="p-note">Or ₹25 / ₹20 per student by plan, billed yearly. Government schools pay half · ₹30,000/year minimum.</p></article>' +
+            '<article class="price-card"><p class="p-name">Teacher Pro <span class="ta">· ஆசிரியர்</span></p><p class="p-amt">₹149<small> /month</small></p><p class="p-note">Free with a school plan.</p></article>' +
+            '<article class="price-card"><p class="p-name">Career <span class="ta">· தொழில் வழி</span></p><p class="p-amt">₹199<small> /month</small></p><p class="p-note">₹99/month inside the Family plan.</p></article>' +
+            '<article class="price-card"><p class="p-name">Companies <span class="ta">· நிறுவனங்கள்</span></p><p class="p-amt">FREE<small> to join &amp; post jobs</small></p><p class="p-note">Pay only when a hire completes one month — half of the first month\'s salary, one time. Staff training ₹2,499/month.</p></article>' +
+          '</div>' +
+
+          '<p class="design-tag">Design ' + n + ' — ' + name + '</p>' +
+        '</div>';
+      }
+
+      var NAMES = { 1: "Living World", 2: "Storybook Cinema", 3: "Hologram Grand", 4: "Royal Premium", 5: "Bright Kids Joy" };
+      document.querySelectorAll(".demo").forEach(function (sec, i) {
+        sec.innerHTML = demoHTML(i + 1, NAMES[i + 1]);
+      });
+
+      /* ---------- Dotted world map (drawn, same artwork in every design) ---------- */
+      var POLYS = [
+        [[28,128],[52,92],[105,62],[180,46],[262,42],[318,54],[348,80],[334,100],[356,118],[340,146],[318,168],[306,196],[312,220],[288,236],[256,228],[240,250],[228,276],[206,288],[192,258],[168,238],[132,228],[106,204],[96,172],[62,152],[34,142]],
+        [[242,302],[272,286],[312,298],[340,326],[334,372],[312,424],[294,472],[280,428],[262,378],[248,334]],
+        [[452,122],[466,88],[492,58],[518,72],[514,102],[540,116],[548,142],[528,160],[514,138],[500,164],[486,148],[466,152],[450,136]],
+        [[466,186],[522,174],[566,188],[592,214],[576,246],[562,286],[542,332],[520,364],[498,336],[478,290],[458,246],[452,206]],
+        [[546,140],[552,96],[596,62],[688,46],[806,44],[896,56],[938,84],[922,128],[886,148],[908,178],[862,206],[822,200],[802,242],[776,226],[742,238],[716,206],[702,246],[690,270],[674,232],[660,196],[622,206],[602,228],[586,196],[562,176]],
+        [[792,322],[858,310],[916,324],[924,354],[896,386],[840,390],[800,368],[786,342]],
+        [[452,92],[470,88],[474,102],[456,108]],
+        [[884,124],[902,110],[920,124],[908,144],[888,140]]
+      ];
+      function inPoly(x, y, poly) {
+        var inside = false;
+        for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+          var xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+          if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+        }
+        return inside;
+      }
+      function buildMap() {
+        var grads = [["wg-pink","#ffe0ec","#ff5d8f"],["wg-magenta","#ffd3ea","#e84393"],["wg-orange","#ffe9b8","#ff8a3d"],["wg-yellow","#fff7ae","#ffc531"],["wg-lime","#eaffb0","#7ed957"],["wg-green","#c9ffd9","#2fbf71"],["wg-teal","#b8fff1","#12b5a5"],["wg-cyan","#c8f2ff","#38a8e0"],["wg-blue","#d3e4ff","#5b7fe8"],["wg-purple","#ecd9ff","#9b6ce8"],["wg-coral","#ffd9c9","#ff6b57"]];
+        var defs = '<radialGradient id="wg-sea" cx="50%" cy="36%" r="78%"><stop offset="0%" stop-color="#0d6e8c"/><stop offset="45%" stop-color="#074a66"/><stop offset="78%" stop-color="#032c40"/><stop offset="100%" stop-color="#021c2b"/></radialGradient>' +
+          '<filter id="wg-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>';
+        grads.forEach(function (g) {
+          defs += '<radialGradient id="' + g[0] + '" cx="35%" cy="30%" r="85%"><stop offset="0%" stop-color="' + g[1] + '"/><stop offset="100%" stop-color="' + g[2] + '"/></radialGradient>';
+        });
+        function pathOf(poly) { return "M" + poly.map(function (p) { return p[0] + "," + p[1]; }).join("L") + "Z"; }
+        POLYS.forEach(function (poly, i) { defs += '<clipPath id="wg-clip' + i + '"><path d="' + pathOf(poly) + '"/></clipPath>'; });
+        defs += '<clipPath id="wg-land">' + POLYS.map(function (poly) { return '<path d="' + pathOf(poly) + '"/>'; }).join("") + '</clipPath>';
+        function R(x, y, w, h, f, op) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="' + f + '"' + (op ? ' opacity="' + op + '"' : '') + '/>'; }
+        function E(cx, cy, rx, ry, f, op) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + f + '"' + (op ? ' opacity="' + op + '"' : '') + '/>'; }
+        function P(pts, f, op) { return '<polygon points="' + pts + '" fill="' + f + '"' + (op ? ' opacity="' + op + '"' : '') + '/>'; }
+        function U(id) { return "url(#" + id + ")"; }
+        var BASE = ["wg-lime","wg-green","wg-orange","wg-yellow","wg-yellow","wg-orange","wg-pink","wg-coral"];
+        var groups = [
+          R(20,35,180,120,U("wg-pink")) + R(140,35,135,85,U("wg-orange")) + P("255,35 362,48 362,112 272,108", U("wg-teal")) + R(248,95,120,80,U("wg-cyan")) + R(90,140,125,75,U("wg-yellow")) + R(210,140,155,80,U("wg-green")) + E(252,232,62,46,U("wg-magenta")) + E(165,208,58,36,U("wg-coral")),
+          R(238,282,68,82,U("wg-yellow")) + E(302,348,56,72,U("wg-pink")) + R(238,348,62,128,U("wg-teal")) + E(300,424,46,56,U("wg-blue")) + R(282,296,62,64,U("wg-green")),
+          R(445,52,62,72,U("wg-cyan")) + R(498,55,58,78,U("wg-pink")) + E(482,138,46,36,U("wg-yellow")) + R(502,112,62,58,U("wg-green")) + E(548,178,52,42,U("wg-magenta")) + R(448,148,58,58,U("wg-coral")),
+          R(448,168,78,68,U("wg-yellow")) + R(518,168,78,62,U("wg-green")) + E(488,266,46,56,U("wg-pink")) + R(532,228,64,74,U("wg-teal")) + E(520,322,52,50,U("wg-orange")) + R(450,224,48,64,U("wg-cyan")),
+          R(542,38,175,92,U("wg-yellow")) + R(712,38,232,86,U("wg-cyan")) + E(884,122,62,46,U("wg-pink")) + R(542,128,84,74,U("wg-orange")) + R(618,122,98,68,U("wg-green")) + R(708,128,114,72,U("wg-coral")) + E(772,214,66,52,U("wg-yellow")) + P("640,192 706,202 696,268 664,278 644,234", U("wg-teal")) + R(596,188,58,62,U("wg-purple")) + R(542,172,62,48,U("wg-magenta")) + E(748,256,56,36,U("wg-lime")) + R(818,176,64,64,U("wg-blue")),
+          R(782,302,58,92,U("wg-coral")) + R(832,302,52,92,U("wg-yellow")) + E(888,360,46,36,U("wg-green")) + E(830,378,42,26,U("wg-pink")),
+          "",
+          ""
+        ];
+        var land = POLYS.map(function (poly, i) {
+          return '<path d="' + pathOf(poly) + '" fill="' + U(BASE[i]) + '"/>' +
+            '<g clip-path="url(#wg-clip' + i + ')">' + groups[i] + '</g>';
+        }).join("");
+        var mottle = '<g clip-path="url(#wg-land)" filter="url(#wg-blur)" opacity=".34">' +
+          E(200,110,52,22,"#ffffff") + E(300,340,44,30,"#ffffff") + E(520,300,40,26,"#fff3ae") +
+          E(760,120,70,26,"#ffffff") + E(850,350,40,20,"#ffd9c9") + E(90,180,40,20,"#ffe0ec") +
+          E(560,180,36,20,"#ffffff") + E(690,235,30,20,"#ffffff") + '</g>';
+        var borders = '<g clip-path="url(#wg-land)" fill="none" stroke="rgba(13,42,54,.38)" stroke-width="1.3">' +
+          '<path d="M150,70 L160,150 M255,100 L250,170 M120,168 L335,168 M215,168 L205,242"/>' +
+          '<path d="M285,300 L300,462 M242,345 L338,330"/>' +
+          '<path d="M505,68 L500,162 M448,130 L562,140 M535,158 L562,212"/>' +
+          '<path d="M520,172 L515,252 M452,236 L592,240 M515,252 L542,362"/>' +
+          '<path d="M625,52 L615,192 M716,48 L722,142 M658,192 L652,268 M716,142 L828,150 M598,190 L702,200 M828,150 L802,238"/>' +
+          '<path d="M836,310 L842,390 M788,350 L922,344"/></g>';
+        var outlines = POLYS.map(function (poly) {
+          return '<path d="' + pathOf(poly) + '" fill="none" stroke="rgba(10,35,48,.5)" stroke-width="1.4"/>';
+        }).join("");
+        var islands = E(742,282,11,6,U("wg-pink")) + E(768,290,12,6,U("wg-orange")) + E(796,297,12,6,U("wg-teal")) + E(826,293,12,6,U("wg-yellow")) + E(856,299,12,6,U("wg-green")) + E(888,306,14,7,U("wg-magenta"));
+        var grat = "";
+        [90, 170, 250, 330, 410].forEach(function (yy) { grat += '<line x1="0" y1="' + yy + '" x2="1000" y2="' + yy + '" stroke="#8fe3f2" stroke-width="1" opacity=".14"/>'; });
+        [170, 340, 510, 680, 850].forEach(function (xx) { grat += '<line x1="' + xx + '" y1="0" x2="' + xx + '" y2="500" stroke="#8fe3f2" stroke-width="1" opacity=".14"/>'; });
+        var oceans =
+          '<text class="ocean-label" x="512" y="26" text-anchor="middle">Arctic Ocean</text>' +
+          '<text class="ocean-label" x="72" y="282" text-anchor="middle"><tspan x="72">North</tspan><tspan x="72" dy="16">Pacific Ocean</tspan></text>' +
+          '<text class="ocean-label" x="215" y="446" text-anchor="middle"><tspan x="215">South</tspan><tspan x="215" dy="16">Pacific Ocean</tspan></text>' +
+          '<text class="ocean-label" x="380" y="228" text-anchor="middle"><tspan x="380">North Atlantic</tspan><tspan x="380" dy="16">Ocean</tspan></text>' +
+          '<text class="ocean-label" x="415" y="352" text-anchor="middle"><tspan x="415">South Atlantic</tspan><tspan x="415" dy="16">Ocean</tspan></text>' +
+          '<text class="ocean-label" x="672" y="336" text-anchor="middle">Indian Ocean</text>' +
+          '<text class="ocean-label" x="512" y="482" text-anchor="middle">Antarctic Ocean</text>';
+        var labels =
+          '<text class="c-small" x="306" y="84" text-anchor="middle">Greenland</text>' +
+          '<text class="c-label" x="192" y="106" text-anchor="middle">Canada</text>' +
+          '<text class="c-label" x="230" y="184" text-anchor="middle">United States</text>' +
+          '<text class="c-small" x="216" y="244" text-anchor="middle">Mexico</text>' +
+          '<text class="c-label" x="303" y="360" text-anchor="middle">Brazil</text>' +
+          '<text class="c-small" x="290" y="428" text-anchor="middle">Argentina</text>' +
+          '<text class="c-label" x="738" y="98" text-anchor="middle">Russia</text>' +
+          '<text class="c-small" x="640" y="166" text-anchor="middle">Kazakhstan</text>' +
+          '<text class="c-small" x="778" y="162" text-anchor="middle">Mongolia</text>' +
+          '<text class="c-label" x="788" y="208" text-anchor="middle">China</text>' +
+          '<text class="c-small" x="672" y="240" text-anchor="middle">India</text>' +
+          '<text class="c-small" x="484" y="206" text-anchor="middle">Algeria</text>' +
+          '<text class="c-small" x="562" y="202" text-anchor="middle">Egypt</text>' +
+          '<text class="c-small" x="480" y="276" text-anchor="middle">Nigeria</text>' +
+          '<text class="c-small" x="852" y="354" text-anchor="middle">Australia</text>';
+        var compass = '<g transform="translate(150,392)" opacity=".8">' +
+          '<circle r="36" fill="none" stroke="#8fe3f2" stroke-width="1.2" opacity=".55"/>' +
+          '<circle r="27" fill="none" stroke="#8fe3f2" stroke-width="1" opacity=".4"/>' +
+          '<path d="M0,-38 L7,-9 L38,0 L9,7 L0,38 L-7,9 L-38,0 L-9,-7 Z" fill="#8fe3f2" opacity=".45"/>' +
+          '<path d="M0,-20 L5,0 L0,20 L-5,0 Z" fill="#c9f4fc" opacity=".8"/>' +
+          '<text class="compass-t" x="0" y="-46" text-anchor="middle">N</text>' +
+          '<text class="compass-t" x="0" y="58" text-anchor="middle">S</text>' +
+          '<text class="compass-t" x="50" y="4">E</text>' +
+          '<text class="compass-t" x="-56" y="4">W</text></g>';
+        var plane = '<g transform="translate(52,34)" opacity=".5" fill="#57c8de"><path d="M0,0 L30,9 L0,18 L7,9 Z"/></g>';
+        var ship = '<g transform="translate(398,452)" opacity=".5" fill="#57c8de"><path d="M-24,4 L24,4 L16,14 L-16,14 Z"/><rect x="-2" y="-12" width="3" height="16"/><path d="M1,-12 L16,-2 L1,-2 Z"/></g>';
+        return '<svg class="map-svg" viewBox="0 0 1000 500" role="img" aria-label="Drawn world map — tap a country to begin">' +
+          '<defs>' + defs + '</defs>' +
+          '<rect x="0" y="0" width="1000" height="500" fill="url(#wg-sea)"/>' +
+          '<ellipse class="glowdisc" cx="500" cy="250" rx="430" ry="205"/>' + grat +
+          land + mottle + borders + outlines + islands + oceans + labels + compass + plane + ship +
+          '<path class="journey" d="M215,122 C330,60 470,86 462,96 C520,150 610,205 672,220 C770,240 850,170 894,146 C930,220 900,300 856,352"/>' +
+          '</svg>';
+      }
+      var MAP = buildMap();
+      document.querySelectorAll(".map-slot").forEach(function (slot) { slot.innerHTML = MAP; });
+
+      /* ---------- Zoom-level maps: India, Tamil Nadu, Chennai (drawn previews) ---------- */
+      function indiaSVG() {
+        var outline = "500,28 545,55 560,90 610,95 640,120 615,140 590,130 600,170 575,205 560,250 545,300 530,360 515,430 500,468 488,420 478,360 462,310 430,285 395,265 372,225 368,185 395,160 385,130 415,105 430,70 462,45";
+        var defs = '<radialGradient id="ig-sea" cx="50%" cy="30%" r="80%"><stop offset="0%" stop-color="#0d6e8c"/><stop offset="55%" stop-color="#063e55"/><stop offset="100%" stop-color="#032635"/></radialGradient>' +
+          [["ig-pink","#ffe0ec","#ff5d8f"],["ig-orange","#ffe9b8","#ff8a3d"],["ig-yellow","#fff7ae","#ffc531"],["ig-lime","#eaffb0","#7ed957"],["ig-teal","#b8fff1","#12b5a5"],["ig-blue","#c8f2ff","#38a8e0"],["ig-purple","#ecd9ff","#9b6ce8"],["ig-magenta","#ffd3ea","#e84393"]].map(function (g) {
+            return '<radialGradient id="' + g[0] + '" cx="35%" cy="30%" r="85%"><stop offset="0%" stop-color="' + g[1] + '"/><stop offset="100%" stop-color="' + g[2] + '"/></radialGradient>';
+          }).join("") +
+          '<clipPath id="ig-clip"><polygon points="' + outline + '"/></clipPath>';
+        var patches =
+          '<rect x="360" y="20" width="290" height="450" fill="url(#ig-yellow)"/>' +
+          '<rect x="408" y="20" width="240" height="100" fill="url(#ig-orange)"/>' +
+          '<rect x="360" y="95" width="120" height="105" fill="url(#ig-pink)"/>' +
+          '<rect x="548" y="85" width="100" height="130" fill="url(#ig-teal)"/>' +
+          '<rect x="360" y="160" width="115" height="130" fill="url(#ig-blue)"/>' +
+          '<rect x="470" y="165" width="105" height="90" fill="url(#ig-lime)"/>' +
+          '<polygon points="548,170 610,165 560,255 520,255" fill="url(#ig-purple)"/>' +
+          '<rect x="385" y="250" width="165" height="65" fill="url(#ig-magenta)"/>' +
+          '<polygon points="495,255 565,250 535,365 492,320" fill="url(#ig-orange)"/>' +
+          '<rect x="450" y="300" width="100" height="70" fill="url(#ig-teal)"/>' +
+          '<polygon points="458,305 482,360 492,425 502,472 470,432 452,362" fill="url(#ig-lime)"/>';
+        return '<svg class="map-svg" viewBox="320 5 360 490" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Drawn map of India with Tamil Nadu highlighted">' +
+          '<defs>' + defs + '</defs>' +
+          '<rect x="320" y="5" width="360" height="490" fill="url(#ig-sea)"/>' +
+          '<g clip-path="url(#ig-clip)">' + patches + '</g>' +
+          '<polygon points="' + outline + '" fill="none" stroke="rgba(10,35,48,.5)" stroke-width="2"/>' +
+          '<ellipse cx="520" cy="478" rx="7" ry="10" fill="url(#ig-pink)" transform="rotate(20 520 478)"/>' +
+          '<path class="boundary" d="M415,105 L478,150 L545,118"/>' +
+          '<path class="boundary" d="M478,150 L470,250 L478,358"/>' +
+          '<path class="boundary" d="M392,168 L478,192 L566,178"/>' +
+          '<path class="boundary" d="M372,225 L470,250 L560,250"/>' +
+          '<path class="boundary" d="M430,285 L470,250 L545,300"/>' +
+          '<polygon class="region-hl" points="478,358 530,360 515,430 500,468 488,420"/>' +
+          '<text class="sea-label" x="352" y="330" text-anchor="middle" transform="rotate(-90 352 330)">Arabian Sea</text>' +
+          '<text class="sea-label" x="648" y="330" text-anchor="middle" transform="rotate(90 648 330)">Bay of Bengal</text>' +
+          '<text class="sea-label" x="582" y="488" text-anchor="middle">Indian Ocean</text>' +
+          '<text class="st-label" x="425" y="192" text-anchor="middle">Rajasthan</text>' +
+          '<text class="st-label" x="512" y="146" text-anchor="middle">Uttar Pradesh</text>' +
+          '<text class="st-small" x="392" y="238" text-anchor="middle">Gujarat</text>' +
+          '<text class="st-small" x="476" y="222" text-anchor="middle">Madhya Pradesh</text>' +
+          '<text class="st-label" x="448" y="276" text-anchor="middle">Maharashtra</text>' +
+          '<text class="st-small" x="466" y="326" text-anchor="middle">Karnataka</text>' +
+          '<text class="st-small" x="440" y="402" text-anchor="middle">Kerala</text>' +
+          '<text class="st-small" x="540" y="298" text-anchor="middle">Andhra Pradesh</text>' +
+          '<text class="st-small" x="592" y="192" text-anchor="middle">West Bengal</text>' +
+          '</svg>';
+      }
+      function tnSVG() {
+        var outline = "330,90 430,60 560,55 665,95 690,170 655,250 600,330 545,415 505,465 465,400 410,330 355,260 320,180";
+        var defs = '<radialGradient id="tn-sea" cx="50%" cy="30%" r="80%"><stop offset="0%" stop-color="#0d6e8c"/><stop offset="55%" stop-color="#063e55"/><stop offset="100%" stop-color="#032635"/></radialGradient>' +
+          [["tn-pink","#ffe0ec","#ff5d8f"],["tn-orange","#ffe9b8","#ff8a3d"],["tn-yellow","#fff7ae","#ffc531"],["tn-teal","#b8fff1","#12b5a5"],["tn-green","#c9ffd9","#2fbf71"]].map(function (g) {
+            return '<radialGradient id="' + g[0] + '" cx="35%" cy="30%" r="85%"><stop offset="0%" stop-color="' + g[1] + '"/><stop offset="100%" stop-color="' + g[2] + '"/></radialGradient>';
+          }).join("") +
+          '<clipPath id="tn-clip"><polygon points="' + outline + '"/></clipPath>';
+        var patches =
+          '<rect x="315" y="50" width="385" height="420" fill="url(#tn-yellow)"/>' +
+          '<rect x="315" y="50" width="175" height="420" fill="url(#tn-green)"/>' +
+          '<rect x="585" y="50" width="115" height="290" fill="url(#tn-teal)"/>' +
+          '<rect x="395" y="315" width="215" height="160" fill="url(#tn-pink)"/>' +
+          '<ellipse cx="455" cy="375" rx="48" ry="42" fill="url(#tn-orange)"/>' +
+          '<rect x="460" y="165" width="140" height="165" fill="url(#tn-yellow)"/>' +
+          '<ellipse cx="648" cy="120" rx="58" ry="48" fill="url(#tn-orange)"/>';
+        var compass = '<g transform="translate(322,452) scale(.55)" opacity=".8">' +
+          '<circle r="36" fill="none" stroke="#8fe3f2" stroke-width="2" opacity=".55"/>' +
+          '<path d="M0,-38 L7,-9 L38,0 L9,7 L0,38 L-7,9 L-38,0 L-9,-7 Z" fill="#8fe3f2" opacity=".45"/>' +
+          '<text class="compass-t" x="0" y="-46" text-anchor="middle">N</text></g>';
+        return '<svg class="map-svg" viewBox="300 40 420 440" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Drawn map of Tamil Nadu with its cities">' +
+          '<defs>' + defs + '</defs>' +
+          '<rect x="300" y="40" width="420" height="440" fill="url(#tn-sea)"/>' +
+          '<g clip-path="url(#tn-clip)">' + patches + '</g>' +
+          '<polygon points="' + outline + '" fill="none" stroke="rgba(10,35,48,.5)" stroke-width="2"/>' +
+          '<path class="boundary" d="M355,180 L500,200 L665,170"/>' +
+          '<path class="boundary" d="M410,330 L480,210 L600,330"/>' +
+          '<path class="boundary" d="M505,58 L480,210 L500,462"/>' +
+          '<path class="boundary" d="M320,180 L480,210 L690,170"/>' +
+          '<circle class="citydot" cx="648" cy="120" r="6"/>' +
+          '<circle class="citydot" cx="560" cy="255" r="6"/>' +
+          '<circle class="citydot" cx="455" cy="375" r="6"/>' +
+          '<circle class="citydot" cx="350" cy="285" r="6"/>' +
+          '<text class="sea-label" x="706" y="260" text-anchor="middle" transform="rotate(90 706 260)">Bay of Bengal</text>' +
+          compass +
+          '</svg>';
+      }
+      function chennaiSVG() {
+        var outline = "330,60 520,40 680,80 720,200 690,330 590,430 430,455 320,380 285,240 300,130";
+        var defs = '<radialGradient id="cn-sea" cx="50%" cy="30%" r="80%"><stop offset="0%" stop-color="#0d6e8c"/><stop offset="55%" stop-color="#063e55"/><stop offset="100%" stop-color="#032635"/></radialGradient>' +
+          [["cn-pink","#ffe0ec","#ff5d8f"],["cn-orange","#ffe9b8","#ff8a3d"],["cn-yellow","#fff7ae","#ffc531"],["cn-teal","#b8fff1","#12b5a5"],["cn-green","#c9ffd9","#2fbf71"],["cn-purple","#ecd9ff","#9b6ce8"]].map(function (g) {
+            return '<radialGradient id="' + g[0] + '" cx="35%" cy="30%" r="85%"><stop offset="0%" stop-color="' + g[1] + '"/><stop offset="100%" stop-color="' + g[2] + '"/></radialGradient>';
+          }).join("") +
+          '<clipPath id="cn-clip"><polygon points="' + outline + '"/></clipPath>';
+        var patches =
+          '<rect x="280" y="35" width="450" height="430" fill="url(#cn-yellow)"/>' +
+          '<rect x="280" y="35" width="450" height="150" fill="url(#cn-orange)"/>' +
+          '<rect x="280" y="125" width="195" height="340" fill="url(#cn-pink)"/>' +
+          '<rect x="585" y="75" width="145" height="360" fill="url(#cn-teal)"/>' +
+          '<rect x="425" y="325" width="270" height="140" fill="url(#cn-green)"/>' +
+          '<ellipse cx="545" cy="255" rx="62" ry="72" fill="url(#cn-purple)"/>' +
+          '<rect x="465" y="175" width="110" height="150" fill="url(#cn-yellow)"/>';
+        var compass = '<g transform="translate(712,105) scale(.5)" opacity=".8">' +
+          '<circle r="36" fill="none" stroke="#8fe3f2" stroke-width="2.2" opacity=".55"/>' +
+          '<path d="M0,-38 L7,-9 L38,0 L9,7 L0,38 L-7,9 L-38,0 L-9,-7 Z" fill="#8fe3f2" opacity=".45"/>' +
+          '<text class="compass-t" x="0" y="-46" text-anchor="middle">N</text></g>';
+        return '<svg class="map-svg" viewBox="265 25 480 450" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Drawn map of Chennai with its areas and school pins">' +
+          '<defs>' + defs + '</defs>' +
+          '<rect x="265" y="25" width="480" height="450" fill="url(#cn-sea)"/>' +
+          '<g clip-path="url(#cn-clip)">' + patches + '</g>' +
+          '<polygon points="' + outline + '" fill="none" stroke="rgba(10,35,48,.5)" stroke-width="2"/>' +
+          '<path class="boundary" d="M300,130 L480,180 L720,200"/>' +
+          '<path class="boundary" d="M480,180 L470,455"/>' +
+          '<path class="boundary" d="M320,380 L470,320 L690,330"/>' +
+          '<path class="boundary" d="M520,40 L480,180 L590,430" stroke-dasharray="6 7"/>' +
+          '<text class="sea-label" x="700" y="300" text-anchor="middle" transform="rotate(90 700 300)">Bay of Bengal</text>' +
+          compass +
+          '</svg>';
+      }
+      document.querySelectorAll(".india-slot").forEach(function (slot) { slot.innerHTML = indiaSVG(); });
+      document.querySelectorAll(".tn-slot").forEach(function (slot) { slot.innerHTML = tnSVG(); });
+      document.querySelectorAll(".chennai-slot").forEach(function (slot) { slot.innerHTML = chennaiSVG(); });
+
+      /* ---------- Map journey wiring (per design, independent) ---------- */
+      var LV_NAMES = ["World", "India", "Tamil Nadu", "Chennai"];
+      var LV_HINTS = [
+        "Tap INDIA to step inside",
+        "India — tap TAMIL NADU, glowing in the south",
+        "Tamil Nadu — tap CHENNAI on the coast",
+        "Chennai — tap a school pin"
+      ];
+      var LV_ORIGIN = ["67.5% 44%", "50.3% 81.6%", "65.7% 18.2%"];
+      var REGION_DATA = {
+        india: { en: "India", states: {
+          tn: { label: "Tamil Nadu · தமிழ்நாடு", en: "Tamil Nadu", districts: [
+            { v: "chennai", label: "Chennai · சென்னை", en: "Chennai" },
+            { v: "thanjavur", label: "Thanjavur · தஞ்சாவூர்", en: "Thanjavur" },
+            { v: "madurai", label: "Madurai · மதுரை", en: "Madurai" },
+            { v: "coimbatore", label: "Coimbatore · கோயம்புத்தூர்", en: "Coimbatore" }
+          ] },
+          kerala: { label: "Kerala · கேரளா", en: "Kerala", districts: [
+            { v: "kochi", label: "Kochi · கொச்சி", en: "Kochi" },
+            { v: "thiruvananthapuram", label: "Thiruvananthapuram · திருவனந்தபுரம்", en: "Thiruvananthapuram" },
+            { v: "kozhikode", label: "Kozhikode · கோழிக்கோடு", en: "Kozhikode" }
+          ] },
+          karnataka: { label: "Karnataka · கர்நாடகா", en: "Karnataka", districts: [
+            { v: "bengaluru", label: "Bengaluru · பெங்களூரு", en: "Bengaluru" },
+            { v: "mysuru", label: "Mysuru · மைசூரு", en: "Mysuru" },
+            { v: "mangaluru", label: "Mangaluru · மங்களூரு", en: "Mangaluru" }
+          ] }
+        } },
+        canada: { en: "Canada", states: {
+          ontario: { label: "Ontario · ஒன்டாரியோ", en: "Ontario", districts: [
+            { v: "toronto", label: "Toronto · டொராண்டோ", en: "Toronto" },
+            { v: "scarborough", label: "Scarborough · ஸ்கார்பரோ", en: "Scarborough" },
+            { v: "ottawa", label: "Ottawa · ஒட்டாவா", en: "Ottawa" }
+          ] },
+          bc: { label: "British Columbia · பிரிட்டிஷ் கொலம்பியா", en: "British Columbia", districts: [
+            { v: "vancouver", label: "Vancouver · வான்கூவர்", en: "Vancouver" },
+            { v: "victoria", label: "Victoria · விக்டோரியா", en: "Victoria" },
+            { v: "surrey", label: "Surrey · சர்ரே", en: "Surrey" }
+          ] }
+        } },
+        china: { en: "China", states: {
+          guangdong: { label: "Guangdong", en: "Guangdong", districts: [
+            { v: "guangzhou", label: "Guangzhou", en: "Guangzhou" },
+            { v: "shenzhen", label: "Shenzhen", en: "Shenzhen" }
+          ] },
+          beijing: { label: "Beijing", en: "Beijing", districts: [
+            { v: "beijing-city", label: "Beijing city", en: "Beijing city" }
+          ] },
+          shanghai: { label: "Shanghai", en: "Shanghai", districts: [
+            { v: "shanghai-city", label: "Shanghai city", en: "Shanghai city" }
+          ] },
+          sichuan: { label: "Sichuan", en: "Sichuan", districts: [
+            { v: "chengdu", label: "Chengdu", en: "Chengdu" }
+          ] },
+          yunnan: { label: "Yunnan", en: "Yunnan", districts: [
+            { v: "kunming", label: "Kunming", en: "Kunming" }
+          ] }
+        } },
+        other: { en: "Other countries", states: {
+          general: { label: "General region · பொது பகுதி", en: "General region", districts: [
+            { v: "general-town", label: "General town · பொது ஊர்", en: "General town" }
+          ] }
+        } }
+      };
+      var VILLAGE_LABELS = { mallipattinam: "Mallipattinam", kollukadu: "Kollukadu" };
+      document.querySelectorAll(".map-panel").forEach(function (panel) {
+        var views = Array.prototype.slice.call(panel.querySelectorAll(".zoom-view"));
+        var backBtn = panel.querySelector("[data-back]");
+        var crumbs = panel.querySelector(".crumbs");
+        var hint = panel.querySelector(".map-hint-top");
+        var card = panel.querySelector(".school-card");
+        var level = 0;
+        var trail = ["World"];
+        var trailLevels = [0];
+        function renderCrumbs() {
+          var html = "";
+          for (var i = 0; i < trail.length; i++) {
+            if (i > 0) html += '<span class="crumb-sep" aria-hidden="true">&#8250;</span>';
+            var isLast = i === trail.length - 1;
+            html += '<button type="button" class="crumb-btn' + (isLast ? " current" : "") + '" data-go="' + trailLevels[i] + '" data-crumb="' + i + '"' + (isLast ? ' aria-current="true"' : "") + '>' + trail[i] + '</button>';
+          }
+          crumbs.innerHTML = html;
+        }
+        function go(n, newTrail, newTrailLevels) {
+          if (n < 0 || n > 3) return;
+          if (n === level) {
+            if (newTrail) { trail = newTrail; trailLevels = newTrailLevels; }
+            backBtn.disabled = trail.length <= 1;
+            renderCrumbs();
+            return;
+          }
+          var from = level;
+          level = n;
+          if (newTrail) { trail = newTrail; trailLevels = newTrailLevels; }
+          else { trail = LV_NAMES.slice(0, n + 1); trailLevels = trail.map(function (_, i) { return i; }); }
+          views.forEach(function (v, i) {
+            if (v._hideTimer) { clearTimeout(v._hideTimer); v._hideTimer = null; }
+            if (i === n) {
+              v.hidden = false;
+              void v.offsetWidth;
+              v.classList.add("is-active");
+              v.classList.remove("is-past");
+            } else {
+              v.classList.remove("is-active");
+              v.classList.toggle("is-past", i < n);
+              v._hideTimer = setTimeout(function () { if (!v.classList.contains("is-active")) v.hidden = true; }, 580);
+            }
+            if (i === from || i === n) v.style.transformOrigin = LV_ORIGIN[Math.min(from, n)] || "50% 50%";
+          });
+          backBtn.disabled = trail.length <= 1;
+          hint.textContent = LV_HINTS[n];
+          if (n !== 3 && card) card.hidden = true;
+          renderCrumbs();
+          var rect = panel.getBoundingClientRect();
+          if (rect.top < 130 || rect.bottom > window.innerHeight) {
+            panel.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
+        }
+        /* --- Cascade picker wiring --- */
+        var pkCountry = panel.querySelector(".pk-country");
+        var pkState = panel.querySelector(".pk-state");
+        var pkDistrict = panel.querySelector(".pk-district");
+        var pkVillageWrap = panel.querySelector(".pk-village-wrap");
+        var pkVillage = panel.querySelector(".pk-village");
+        var pkStatus = panel.querySelector(".picker-status");
+        var pkGo = panel.querySelector("[data-picker-go]");
+        function fillStates() {
+          var c = REGION_DATA[pkCountry.value];
+          pkState.innerHTML = Object.keys(c.states).map(function (k) {
+            return '<option value="' + k + '">' + c.states[k].label + '</option>';
+          }).join("");
+          fillDistricts();
+        }
+        function fillDistricts() {
+          var c = REGION_DATA[pkCountry.value];
+          var s = c.states[pkState.value];
+          if (!s) { pkDistrict.innerHTML = ""; return; }
+          pkDistrict.innerHTML = s.districts.map(function (d) {
+            return '<option value="' + d.v + '">' + d.label + '</option>';
+          }).join("");
+          updateVillage();
+        }
+        function updateVillage() {
+          var show = pkDistrict.value === "thanjavur";
+          pkVillageWrap.hidden = !show;
+          if (!show) pkVillage.value = "";
+        }
+        if (pkCountry) {
+          pkCountry.addEventListener("change", fillStates);
+          pkState.addEventListener("change", fillDistricts);
+          pkDistrict.addEventListener("change", updateVillage);
+          fillStates();
+          pkGo.addEventListener("click", function () {
+            var cKey = pkCountry.value;
+            var c = REGION_DATA[cKey];
+            var s = c.states[pkState.value];
+            var d = s ? s.districts.filter(function (x) { return x.v === pkDistrict.value; })[0] : null;
+            var villageEn = pkVillage && !pkVillageWrap.hidden && pkVillage.value ? VILLAGE_LABELS[pkVillage.value] : null;
+            var isIndia = cKey === "india";
+            var isTN = isIndia && pkState.value === "tn";
+            var isChennai = isTN && d && d.v === "chennai";
+            var newTrail = ["World", c.en];
+            var newLevels = [0, isIndia ? 1 : 0];
+            if (s) { newTrail.push(s.en); newLevels.push(isTN ? 2 : (isIndia ? 1 : 0)); }
+            if (d) { newTrail.push(d.en); newLevels.push(isChennai ? 3 : (isTN ? 2 : (isIndia ? 1 : 0))); }
+            if (villageEn) { newTrail.push(villageEn); newLevels.push(2); }
+            var target = newLevels[newLevels.length - 1];
+            go(target, newTrail, newLevels);
+            var chosen = newTrail.slice(1).join(" › ");
+            var exact = isChennai || (isTN && !d) || (isIndia && !s) || (newTrail.length === 2 && isIndia);
+            if (isChennai) {
+              hint.textContent = LV_HINTS[3];
+              pkStatus.innerHTML = "You are inside <strong>" + chosen + "</strong> — tap a school pin on the map.";
+            } else if (exact) {
+              pkStatus.innerHTML = "You are inside <strong>" + chosen + "</strong>.";
+            } else {
+              hint.textContent = "Showing " + LV_NAMES[target] + " — " + newTrail[newTrail.length - 1] + " chosen";
+              pkStatus.innerHTML = "Showing the <strong>" + LV_NAMES[target] + "</strong> map — <strong>" + chosen + "</strong> opens fully in the app.";
+            }
+          });
+        }
+        renderCrumbs();
+        panel.addEventListener("click", function (e) {
+          var schoolBtn = e.target.closest("[data-school]");
+          if (schoolBtn) {
+            var s = SCHOOLS[parseInt(schoolBtn.getAttribute("data-school"), 10)];
+            panel.querySelectorAll(".school-pin").forEach(function (p) { p.classList.toggle("picked", p === schoolBtn); });
+            card.querySelector(".sc-name").textContent = s.name;
+            card.querySelector(".sc-type").textContent = s.type;
+            card.querySelector(".sc-area").textContent = s.area + ", Chennai";
+            card.querySelector(".sc-note").hidden = true;
+            card.hidden = false;
+            return;
+          }
+          if (e.target.closest("[data-close]")) { card.hidden = true; return; }
+          if (e.target.closest("[data-register]")) { card.querySelector(".sc-note").hidden = false; return; }
+          if (e.target.closest("[data-back]")) {
+            if (trail.length > 1) {
+              var bt = trail.slice(0, -1);
+              var bl = trailLevels.slice(0, -1);
+              go(bl[bl.length - 1], bt, bl);
+              if (pkStatus) pkStatus.textContent = "";
+            } else { go(level - 1); }
+            return;
+          }
+          var goBtn = e.target.closest("[data-go]");
+          if (goBtn) {
+            var ci = goBtn.getAttribute("data-crumb");
+            if (ci !== null && ci !== undefined) {
+              var ti = parseInt(ci, 10);
+              go(trailLevels[ti], trail.slice(0, ti + 1), trailLevels.slice(0, ti + 1));
+            } else {
+              go(parseInt(goBtn.getAttribute("data-go"), 10));
+            }
+            if (pkStatus && !goBtn.classList.contains("crumb-btn")) pkStatus.textContent = "";
+          }
+        });
+      });
+
+      /* ---------- Design switcher + eye-comfort switch ---------- */
+      var root = document.documentElement;
+      var tabs = document.querySelectorAll(".tab");
+      var demos = document.querySelectorAll(".demo");
+      var eyeBtns = document.querySelectorAll(".eye-btn");
+      function setEye(mode) {
+        root.setAttribute("data-eye", mode);
+        eyeBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-eye") === mode ? "true" : "false"); });
+      }
+      function showDesign(n) {
+        tabs.forEach(function (t) { t.setAttribute("aria-selected", t.getAttribute("data-design") === String(n) ? "true" : "false"); });
+        demos.forEach(function (d, i) { d.classList.toggle("active", i === n - 1); });
+        setEye(demos[n - 1].getAttribute("data-natural"));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      tabs.forEach(function (t) {
+        t.addEventListener("click", function () { showDesign(parseInt(t.getAttribute("data-design"), 10)); });
+      });
+      eyeBtns.forEach(function (b) {
+        b.addEventListener("click", function () { setEye(b.getAttribute("data-eye")); });
+      });
+    </script>
+  </body>
+</html>
