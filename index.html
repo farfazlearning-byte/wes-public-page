@@ -69,10 +69,19 @@
         text-transform: uppercase; margin: 0;
       }
 
-      /* ---------- top bar (same manner as farfazlearning.com) ---------- */
+      /* ---------- top bar — floating glass pill ---------- */
       .topbar {
-        background: var(--paper); border-bottom: 1px solid var(--hairline);
-        position: sticky; top: 0; z-index: 20;
+        position: sticky; top: 10px; z-index: 20;
+        width: min(1120px, calc(100% - 20px)); margin: 10px auto 0;
+        border-radius: 999px;
+        background: rgba(250, 246, 233, .88);
+        -webkit-backdrop-filter: blur(10px) saturate(1.2);
+        backdrop-filter: blur(10px) saturate(1.2);
+        border: 1px solid rgba(201, 162, 75, .45);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), 0 14px 30px rgba(11, 46, 39, .16);
+      }
+      @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+        .topbar { background: var(--paper); }
       }
       .topbar-in {
         display: flex; align-items: center; justify-content: space-between;
@@ -100,6 +109,17 @@
       .hero {
         position: relative; overflow: hidden;
         background:
+          radial-gradient(1.6px 1.6px at 8% 18%, rgba(250, 245, 230, .8) 50%, transparent 52%),
+          radial-gradient(1.2px 1.2px at 22% 64%, rgba(250, 245, 230, .45) 50%, transparent 52%),
+          radial-gradient(1.8px 1.8px at 36% 12%, rgba(232, 199, 102, .75) 50%, transparent 52%),
+          radial-gradient(1.2px 1.2px at 48% 78%, rgba(143, 227, 192, .5) 50%, transparent 52%),
+          radial-gradient(1.5px 1.5px at 58% 26%, rgba(250, 245, 230, .6) 50%, transparent 52%),
+          radial-gradient(1.1px 1.1px at 66% 58%, rgba(250, 245, 230, .4) 50%, transparent 52%),
+          radial-gradient(1.7px 1.7px at 74% 14%, rgba(250, 245, 230, .7) 50%, transparent 52%),
+          radial-gradient(1.2px 1.2px at 84% 44%, rgba(232, 199, 102, .55) 50%, transparent 52%),
+          radial-gradient(1.4px 1.4px at 92% 72%, rgba(250, 245, 230, .5) 50%, transparent 52%),
+          radial-gradient(1.1px 1.1px at 15% 86%, rgba(250, 245, 230, .35) 50%, transparent 52%),
+          radial-gradient(1.3px 1.3px at 44% 42%, rgba(250, 245, 230, .35) 50%, transparent 52%),
           radial-gradient(1000px 480px at 88% -10%, rgba(201, 162, 75, .18), transparent 60%),
           radial-gradient(820px 560px at -12% 112%, rgba(20, 90, 70, .55), transparent 62%),
           linear-gradient(165deg, var(--deep-2), var(--deep) 55%, var(--deep-3));
@@ -113,6 +133,11 @@
         animation: drift linear infinite;
       }
       .orbit { position: absolute; right: -150px; top: -150px; width: 470px; height: 470px; pointer-events: none; opacity: .55; }
+      .orbit::after {
+        content: ""; position: absolute; inset: 12%;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(232, 199, 102, .16), rgba(232, 199, 102, .05) 55%, transparent 72%);
+      }
       .orbit-ring {
         position: absolute; inset: 0; border-radius: 50%;
         border: 1px solid rgba(201, 162, 75, .35); animation: spinSlow 90s linear infinite;
@@ -142,7 +167,8 @@
       .hero-cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
       .btn-mint {
         display: inline-flex; align-items: center; gap: 10px;
-        background: var(--mint); color: var(--deep-3);
+        background: linear-gradient(120deg, var(--mint) 20%, #cfe9a9 58%, var(--gold-bright));
+        color: var(--deep-3);
         font-weight: 700; font-size: 1.05rem; text-decoration: none;
         padding: 15px 30px; border-radius: 999px;
         box-shadow: 0 12px 28px rgba(0, 0, 0, .28);
@@ -229,12 +255,20 @@
       /* countdown inside launch card */
       .countdown { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
       .cd-cell {
-        min-width: 76px; text-align: center; padding: 10px 8px 8px;
-        background: rgba(0, 0, 0, .3); border: 1px solid rgba(201, 162, 75, .4);
+        min-width: 76px; text-align: center; padding: 12px 8px 9px;
+        background:
+          radial-gradient(120% 90% at 85% -10%, rgba(232, 199, 102, .16), transparent 55%),
+          rgba(250, 245, 230, .05);
+        border: 1px solid rgba(232, 199, 102, .42);
         border-radius: 14px;
+        box-shadow: inset 0 1px 0 rgba(250, 245, 230, .16), 0 10px 22px rgba(0, 0, 0, .22);
       }
-      .cd-cell b { display: block; font-size: 1.55rem; line-height: 1.1; color: var(--gold-bright); font-weight: 800; font-variant-numeric: tabular-nums; }
-      .cd-cell i { font-style: normal; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cream-dim); }
+      .cd-cell b {
+        display: block; font-family: var(--serif); font-size: 1.6rem; line-height: 1.1;
+        color: var(--gold-bright); font-weight: 700; font-variant-numeric: tabular-nums;
+        text-shadow: 0 1px 12px rgba(232, 199, 102, .3);
+      }
+      .cd-cell i { font-style: normal; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--cream-dim); }
       .cd-open { font-family: var(--serif); font-size: 1.3rem; color: var(--gold-bright); }
 
       /* price rows inside card 08 */
@@ -337,6 +371,181 @@
       .link-tile .lt-top .ta { color: var(--gold-deep); }
       .link-tile .lt-url { display: block; margin-top: 4px; color: var(--ink-soft); font-size: .97rem; word-break: break-all; }
 
+      /* ---------- listen / voice narration ---------- */
+      .listen-row { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+      .btn-listen {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: linear-gradient(160deg, var(--gold-bright), var(--gold));
+        color: #2e2103; font-family: var(--sans); font-weight: 800; font-size: 1.08rem;
+        border: none; cursor: pointer; padding: 15px 30px; border-radius: 999px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .3);
+        transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+      }
+      .btn-listen:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(0, 0, 0, .36); }
+      .btn-listen.is-reading { background: var(--mint); color: var(--deep-3); }
+      .btn-listen .ta { font-weight: 700; }
+      .pickers { display: flex; flex-wrap: wrap; gap: 10px; }
+      .picker {
+        display: flex; gap: 4px; background: rgba(0, 0, 0, .28);
+        border: 1px solid rgba(201, 162, 75, .45); border-radius: 999px; padding: 4px;
+      }
+      .pick-btn {
+        border: none; background: transparent; color: var(--cream);
+        font-family: var(--sans); font-weight: 700; font-size: .95rem;
+        padding: 7px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .pick-btn:hover { color: var(--gold-bright); }
+      .pick-btn[aria-pressed="true"] { background: var(--gold-bright); color: #2e2103; }
+      .pick-btn[aria-pressed="true"]:hover { color: #2e2103; }
+      .listen-note { color: var(--cream-dim); font-size: .98rem; max-width: 44ch; line-height: 1.55; }
+      .listen-note .ta { display: block; margin-top: 3px; line-height: 1.8; color: var(--cream-dim); }
+      .can-read { cursor: pointer; scroll-margin-top: 96px; }
+      .can-read:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+      .reading-now {
+        outline: 3px solid var(--gold-bright); outline-offset: 4px;
+        box-shadow: 0 0 0 7px rgba(201, 162, 75, .22), 0 24px 50px rgba(11, 46, 39, .28);
+      }
+
+      /* ---------- launch reminder ---------- */
+      .btn-share {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1.5px solid rgba(232, 199, 102, .55); color: var(--cream);
+        font-weight: 700; font-size: 1rem; text-decoration: none;
+        padding: 13px 24px; border-radius: 999px;
+        transition: border-color .25s ease, color .25s ease;
+      }
+      .btn-share:hover { border-color: var(--gold-bright); color: var(--gold-bright); }
+      .remind {
+        background: linear-gradient(160deg, var(--deep-2), var(--deep) 60%, var(--deep-3));
+        border-radius: 28px; color: var(--cream); text-align: center;
+        padding: clamp(30px, 4.5vw, 48px);
+        box-shadow: 0 20px 44px rgba(11, 46, 39, .18);
+      }
+      .remind .eyebrow { color: var(--mint); }
+      .remind h2 {
+        font-family: var(--serif-ta); font-weight: 700; color: #fff;
+        font-size: clamp(1.7rem, 4.6vw, 2.5rem); line-height: 1.4; margin: 14px 0 0;
+      }
+      .remind h2 .en {
+        display: block; font-family: var(--serif); font-weight: 600;
+        color: var(--gold-bright); font-size: .6em; margin-top: 6px;
+      }
+      .remind p { color: var(--cream-dim); margin: 14px auto 0; max-width: 58ch; font-size: 1.05rem; }
+      .remind p .ta { display: block; margin-top: 5px; line-height: 1.8; color: var(--cream); }
+      .remind-btns { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+      .btn-cal {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: linear-gradient(160deg, var(--gold-bright), var(--gold));
+        color: #2e2103; font-family: var(--sans); font-weight: 800; font-size: 1.02rem;
+        border: none; cursor: pointer; padding: 14px 26px; border-radius: 999px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(58, 44, 4, .25), 0 12px 28px rgba(0, 0, 0, .28);
+        transition: transform .25s ease, box-shadow .25s ease;
+      }
+      .btn-cal:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(0, 0, 0, .34); }
+      .btn-wa {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: #1da851; color: #fff; font-weight: 800; font-size: 1.02rem;
+        text-decoration: none; padding: 14px 26px; border-radius: 999px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .28);
+        transition: transform .25s ease, box-shadow .25s ease;
+      }
+      .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 18px 34px rgba(0, 0, 0, .34); }
+
+      /* ---------- fixed launch countdown box (deep-green + gold glass) ---------- */
+      .launch-box {
+        position: fixed; top: 84px; right: 14px; z-index: 19;
+        background:
+          radial-gradient(120% 90% at 85% -10%, rgba(232, 199, 102, .22), transparent 55%),
+          linear-gradient(155deg, rgba(20, 74, 60, .88), rgba(11, 46, 39, .92) 58%, rgba(8, 35, 28, .94));
+        -webkit-backdrop-filter: blur(10px) saturate(1.25);
+        backdrop-filter: blur(10px) saturate(1.25);
+        border: 1px solid rgba(232, 199, 102, .5); border-radius: 16px;
+        color: var(--cream); padding: 9px 14px 10px; text-align: center;
+        box-shadow:
+          inset 0 1px 0 rgba(250, 245, 230, .22),
+          inset 0 0 0 1px rgba(250, 245, 230, .05),
+          0 18px 38px rgba(8, 35, 28, .38);
+        font-variant-numeric: tabular-nums;
+      }
+      @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+        .launch-box { background: linear-gradient(155deg, var(--deep-2), var(--deep) 58%, var(--deep-3)); }
+      }
+      .launch-box .lb-label {
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        font-size: .6rem; font-weight: 800; letter-spacing: .16em;
+        text-transform: uppercase; color: var(--mint); margin: 0 0 6px;
+        white-space: nowrap;
+      }
+      .launch-box .lb-label::before {
+        content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%;
+        background: var(--gold-bright); animation: pulseDot 2.4s ease-in-out infinite;
+      }
+      .launch-box .lb-label .ta { text-transform: none; letter-spacing: .02em; color: var(--gold-bright); font-size: .66rem; }
+      .lb-cells { display: flex; gap: 4px; justify-content: center; }
+      .lb-cell { min-width: 37px; padding: 3px 2px 2px; border-radius: 9px; background: rgba(250, 245, 230, .06); box-shadow: inset 0 0 0 1px rgba(232, 199, 102, .16); }
+      .lb-cell b {
+        display: block; font-family: var(--serif); font-size: 1.08rem; line-height: 1.1;
+        color: var(--gold-bright); font-weight: 700;
+        text-shadow: 0 1px 10px rgba(232, 199, 102, .35);
+      }
+      .lb-cell i { font-style: normal; font-size: .54rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--cream-dim); }
+      .lb-date { margin: 6px 0 0; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(250, 245, 230, .66); white-space: nowrap; }
+      .lb-date .ta { text-transform: none; letter-spacing: .02em; color: var(--mint-dim); }
+      .lb-open { font-family: var(--serif); font-size: .95rem; color: var(--gold-bright); white-space: nowrap; }
+      /* glowing orbit-ring accent — matches the hero's ring motif */
+      .launch-box::after {
+        content: ""; position: absolute; top: -13px; right: -13px;
+        width: 42px; height: 42px; border-radius: 50%;
+        border: 1px solid rgba(232, 199, 102, .6);
+        box-shadow: 0 0 16px rgba(232, 199, 102, .35), inset 0 0 10px rgba(232, 199, 102, .18);
+        background: radial-gradient(circle, rgba(232, 199, 102, .12), transparent 70%);
+        animation: spinSlow 90s linear infinite; pointer-events: none;
+      }
+      .launch-box::before {
+        content: ""; position: absolute; top: -16px; right: 6px; z-index: 1;
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--gold-bright);
+        box-shadow: 0 0 10px 2px rgba(232, 199, 102, .55); pointer-events: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .launch-box .lb-label::before { animation: none; }
+        .launch-box::after { animation: none; }
+      }
+      /* Phone clearance — measured on the RENDERED page at 390px, not
+         estimated: the floating top bar's bottom edge sits ~81px down,
+         the box rendered 64px tall (top:88px → bottom edge at 152px),
+         and the hero eyebrow's first line began at ~133px — i.e. behind
+         the box's lower half, showing faintly through the glass. The box
+         keeps its place as a slim two-row strip (label + date on one
+         line, the four time cells beneath) wholly below the top bar,
+         glowing ring and dot included; the hero instead gains top room
+         on phones so the eyebrow's first line starts at ~177px — a clear
+         ~25px below the box's bottom edge, fully readable. */
+      @media (max-width: 620px) {
+        .hero { padding-top: 96px; }
+        .launch-box {
+          top: 88px; right: 8px; max-width: calc(100vw - 16px);
+          display: flex; flex-wrap: wrap; align-items: center;
+          padding: 4px 8px 5px; border-radius: 14px; text-align: left;
+        }
+        .launch-box::after { top: -4px; right: -5px; width: 34px; height: 34px; }
+        .launch-box::before { top: -5px; }
+        .launch-box .lb-label {
+          order: 1; font-size: .46rem; line-height: 1.2;
+          margin: 0; justify-content: flex-start; white-space: normal;
+        }
+        .launch-box .lb-label .ta { font-size: .52rem; }
+        .lb-date {
+          order: 2; font-size: .46rem; line-height: 1.2;
+          margin: 0 0 0 auto; white-space: normal; text-align: right;
+        }
+        .lb-cells { order: 3; flex: 1 0 100%; margin-top: 2px; }
+        .lb-cell { min-width: 30px; padding: 1px 2px; }
+        .lb-cell b { font-size: .84rem; line-height: 1.05; }
+        .lb-cell i { font-size: .44rem; line-height: 1.2; }
+        .lb-open { font-size: .82rem; }
+      }
+
       footer { border-top: 1px solid var(--hairline); padding: 30px 0 42px; text-align: center; }
       footer .f-brand { font-family: var(--serif); letter-spacing: .1em; text-transform: uppercase; color: var(--deep); margin: 0; font-size: .98rem; font-weight: 600; }
       footer .f-brand .ta { text-transform: none; letter-spacing: 0; display: block; margin-top: 5px; color: var(--gold-deep); font-family: "Noto Sans Tamil", var(--sans); font-weight: 600; }
@@ -344,6 +553,18 @@
     </style>
   </head>
   <body>
+    <!-- ================= FIXED LAUNCH COUNTDOWN ================= -->
+    <div class="launch-box" id="launch-box" role="timer" aria-label="Time until the Grand Launch — Monday 23 November 2026">
+      <p class="lb-label">Grand Launch · <span class="ta">பெரும் தொடக்கம்</span></p>
+      <div class="lb-cells" id="lb-cells">
+        <span class="lb-cell"><b id="lb-days">–</b><i>Days</i></span>
+        <span class="lb-cell"><b id="lb-hours">–</b><i>Hrs</i></span>
+        <span class="lb-cell"><b id="lb-mins">–</b><i>Min</i></span>
+        <span class="lb-cell"><b id="lb-secs">–</b><i>Sec</i></span>
+      </div>
+      <p class="lb-date">Mon 23 Nov 2026 · <span class="ta">23 நவம்பர் 2026</span></p>
+    </div>
+
     <!-- ================= TOP BAR ================= -->
     <div class="topbar">
       <div class="wrap topbar-in">
@@ -359,7 +580,7 @@
     </div>
 
     <!-- ================= HERO ================= -->
-    <header class="hero" id="top">
+    <header class="hero" id="top" data-narr="hero">
       <div class="motes" aria-hidden="true">
         <span class="mote" style="left:6%;  width:7px; height:7px; animation-duration:15s;"></span>
         <span class="mote" style="left:16%; width:5px; height:5px; animation-duration:19s; animation-delay:-6s;"></span>
@@ -395,6 +616,28 @@
             <span><b>Grand Launch — Monday 23 November 2026</b><br />
             <span class="ta">பெரும் தொடக்கம் — திங்கட்கிழமை, 23 நவம்பர் 2026</span></span>
           </span>
+          <a class="btn-share wa-share" href="https://wa.me/?text=https%3A%2F%2Fworld.farfazlearning.com" target="_blank" rel="noopener">Share on WhatsApp · <span class="ta">பகிரவும்</span></a>
+        </div>
+
+        <div class="listen-row">
+          <button class="btn-listen" id="listen-btn" type="button" aria-pressed="false">
+            <span aria-hidden="true" id="listen-ico">🔊</span>
+            <span id="listen-label"><span class="ta">கேளுங்கள்</span> · Listen</span>
+          </button>
+          <div class="pickers">
+            <div class="picker" role="group" aria-label="Voice">
+              <button type="button" class="pick-btn" data-voice="nisa" aria-pressed="true">Nisa <span class="ta">குரல்</span></button>
+              <button type="button" class="pick-btn" data-voice="arshed" aria-pressed="false">Arshed <span class="ta">குரல்</span></button>
+            </div>
+            <div class="picker" role="group" aria-label="Language">
+              <button type="button" class="pick-btn" data-lang="en" aria-pressed="false">English</button>
+              <button type="button" class="pick-btn" data-lang="ta" aria-pressed="true"><span class="ta">தமிழ்</span></button>
+              <button type="button" class="pick-btn" data-lang="hi" aria-pressed="false">हिन्दी</button>
+            </div>
+          </div>
+          <span class="listen-note" id="listen-note">Hear this whole page read aloud — or tap any card below and it will read itself.
+            <span class="ta">இந்தப் பக்கம் முழுவதையும் படித்துக் காட்டக் கேளுங்கள் — அல்லது கீழுள்ள எந்த அட்டையையும் தொடுங்கள், அது தன்னைப் படிக்கும்.</span>
+          </span>
         </div>
       </div>
     </header>
@@ -402,7 +645,7 @@
     <!-- ================= NUMBERED CARDS ================= -->
     <section id="steps">
       <div class="wrap">
-        <div class="sec-head">
+        <div class="sec-head" data-narr="head">
           <p class="eyebrow">World Education System</p>
           <h2>எல்லாம் எளிதாக, படிப்படியாக.</h2>
           <p class="en">Everything, plainly — one step at a time</p>
@@ -413,7 +656,7 @@
 
         <div class="cards">
           <!-- 01 -->
-          <article class="card">
+          <article class="card" data-narr="c01">
             <div class="card-top">
               <span class="num">01</span>
               <span class="chip">Start here</span>
@@ -427,7 +670,7 @@
           </article>
 
           <!-- 02 -->
-          <article class="card">
+          <article class="card" data-narr="c02">
             <div class="card-top">
               <span class="num">02</span>
               <span class="chip">Pre-KG → Class 12+</span>
@@ -441,7 +684,7 @@
           </article>
 
           <!-- 03 -->
-          <article class="card">
+          <article class="card" data-narr="c03">
             <div class="card-top">
               <span class="num">03</span>
               <span class="chip">Starting with India</span>
@@ -455,7 +698,7 @@
           </article>
 
           <!-- 04 -->
-          <article class="card">
+          <article class="card" data-narr="c04">
             <div class="card-top">
               <span class="num">04</span>
               <span class="chip">Your choice</span>
@@ -469,7 +712,7 @@
           </article>
 
           <!-- 05 -->
-          <article class="card">
+          <article class="card" data-narr="c05">
             <div class="card-top">
               <span class="num">05</span>
               <span class="chip">4 ways to learn</span>
@@ -489,7 +732,7 @@
           </article>
 
           <!-- 06 -->
-          <article class="card">
+          <article class="card" data-narr="c06">
             <div class="card-top">
               <span class="num floaty">06</span>
               <span class="chip">Always free</span>
@@ -503,7 +746,7 @@
           </article>
 
           <!-- 07 -->
-          <article class="card">
+          <article class="card" data-narr="c07">
             <div class="card-top">
               <span class="num">07</span>
               <span class="chip">Grand Launch</span>
@@ -523,7 +766,7 @@
           </article>
 
           <!-- 08 -->
-          <article class="card" id="prices-card">
+          <article class="card" id="prices-card" data-narr="c08">
             <div class="card-top">
               <span class="num">08</span>
               <span class="chip">India prices</span>
@@ -547,7 +790,7 @@
           </article>
 
           <!-- 09 -->
-          <article class="card">
+          <article class="card" data-narr="c09">
             <div class="card-top">
               <span class="num">09</span>
               <span class="chip">Worldwide · Schools</span>
@@ -566,7 +809,7 @@
     <!-- ================= OUR WORLD ================= -->
     <section style="padding-top: 0;">
       <div class="wrap">
-        <div class="world">
+        <div class="world" data-narr="world">
           <div>
             <p class="eyebrow">Our World</p>
             <h2>ஒரே அமைப்பு,<br />அனைவருக்கும்.</h2>
@@ -588,7 +831,7 @@
     <!-- ================= ABOUT ================= -->
     <section id="about" style="padding-top: 0;">
       <div class="wrap">
-        <div class="about">
+        <div class="about" data-narr="about">
           <p class="eyebrow">About</p>
           <h2>கற்றல் குரலால், கதையால்,<br />அனைவருக்கும்.</h2>
           <p>The World Education System is FARFAZ&rsquo;s learning system: lessons taught aloud as stories,
@@ -605,7 +848,7 @@
     <!-- ================= CONNECT / JOIN ================= -->
     <section id="join">
       <div class="wrap">
-        <div class="connect">
+        <div class="connect" data-narr="join">
           <p class="eyebrow">Connect · Join</p>
           <h2>Join the World Education System
             <span class="ta-line ta">உலகக் கல்வி அமைப்பில் சேருங்கள்</span>
@@ -616,7 +859,7 @@
 
           <div class="join-grid">
             <div class="qr-card floaty-slow">
-              <img src="data:image/png;base64,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" width="820" height="820" alt="QR code that opens the World Education System joining link" />
+              <img src="assets/join-qr.png" width="820" height="820" alt="QR code that opens the World Education System joining link" />
               <p class="qr-cap">Scan to join<span class="ta">சேர scan செய்யுங்கள்</span></p>
             </div>
             <div>
@@ -643,11 +886,33 @@
                   </div>
                 </li>
               </ol>
-              <a class="link-tile" href="https://world.farfazlearning.com">
+              <a class="link-tile" href="#join">
                 <span class="lt-top">Open the joining link ↗ · <span class="ta">சேர்க்கை link-ஐத் திறக்கவும்</span></span>
-                <span class="lt-url">https://world.farfazlearning.com</span>
+                <span class="lt-url">world.farfazlearning.com/#join</span>
               </a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LAUNCH REMINDER ================= -->
+    <section style="padding-top: 0;">
+      <div class="wrap">
+        <div class="remind" data-narr="remind">
+          <p class="eyebrow">Grand Launch · Reminder</p>
+          <h2>🔔 <span class="ta">Launch நாள் நினைவூட்டல்</span>
+            <span class="en">Launch-day reminder</span>
+          </h2>
+          <p>Grand Launch — <b>Monday 23 November 2026</b>. Save the day, and pass the news on.
+            <span class="ta">பெரும் தொடக்கம் — <b>திங்கட்கிழமை, 23 நவம்பர் 2026</b>. இந்த நாளைச் சேமித்து, இந்தச் செய்தியை மற்றவர்களுக்கும் சொல்லுங்கள்.</span>
+          </p>
+          <p>Joining opens on launch day — and every member gets their own Member ID on that day.
+            <span class="ta">சேர்க்கை தொடக்க நாளில் திறக்கும் — ஒவ்வொரு உறுப்பினருக்கும் அவரவர் சொந்த Member ID அன்றே கிடைக்கும்.</span>
+          </p>
+          <div class="remind-btns">
+            <button class="btn-cal" id="cal-btn" type="button">📅 Add to Calendar · <span class="ta">நாட்காட்டியில் சேர்க்கவும்</span></button>
+            <a class="btn-wa wa-share" href="https://wa.me/?text=https%3A%2F%2Fworld.farfazlearning.com" target="_blank" rel="noopener">Share on WhatsApp · <span class="ta">பகிரவும்</span></a>
           </div>
         </div>
       </div>
@@ -671,20 +936,218 @@
             hEl = document.getElementById("cd-hours"),
             mEl = document.getElementById("cd-mins"),
             sEl = document.getElementById("cd-secs");
+        var lbBox = document.getElementById("launch-box"),
+            lbCells = document.getElementById("lb-cells"),
+            lbD = document.getElementById("lb-days"),
+            lbH = document.getElementById("lb-hours"),
+            lbM = document.getElementById("lb-mins"),
+            lbS = document.getElementById("lb-secs");
         function pad(n) { return (n < 10 ? "0" : "") + n; }
         function tick() {
           var diff = launch - Date.now();
           if (diff <= 0) {
             box.innerHTML = '<span class="cd-open">Joining is now open — welcome in!</span>';
+            if (lbBox) lbBox.innerHTML = '<span class="lb-open">🎉 Launched · <span class="ta">தொடங்கிவிட்டது!</span></span>';
             return;
           }
-          dEl.textContent = Math.floor(diff / 86400000);
-          hEl.textContent = pad(Math.floor(diff % 86400000 / 3600000));
-          mEl.textContent = pad(Math.floor(diff % 3600000 / 60000));
-          sEl.textContent = pad(Math.floor(diff % 60000 / 1000));
+          var dd = Math.floor(diff / 86400000),
+              hh = pad(Math.floor(diff % 86400000 / 3600000)),
+              mm = pad(Math.floor(diff % 3600000 / 60000)),
+              ss = pad(Math.floor(diff % 60000 / 1000));
+          dEl.textContent = dd;
+          hEl.textContent = hh;
+          mEl.textContent = mm;
+          sEl.textContent = ss;
+          if (lbD) {
+            lbD.textContent = dd;
+            lbH.textContent = hh;
+            lbM.textContent = mm;
+            lbS.textContent = ss;
+          }
           setTimeout(tick, 1000);
         }
         tick();
+      })();
+    </script>
+
+    <script>
+      (function () {
+        /* Pre-recorded narration in the two house voices (Nisa / Arshed),
+           in English, Tamil or Hindi, with a soft music bed under the voice.
+           Nothing plays until a visitor taps. */
+        var btn = document.getElementById("listen-btn");
+        var ico = document.getElementById("listen-ico");
+        var label = document.getElementById("listen-label");
+        var sections = Array.prototype.slice.call(document.querySelectorAll("[data-narr]"));
+        if (!btn || !sections.length) return;
+
+        var lang = "ta", voice = "nisa";
+        try {
+          lang = localStorage.getItem("wes-narr-lang") || lang;
+          voice = localStorage.getItem("wes-narr-voice") || voice;
+        } catch (e) {}
+        if (["en", "ta", "hi"].indexOf(lang) < 0) lang = "ta";
+        if (["nisa", "arshed"].indexOf(voice) < 0) voice = "nisa";
+
+        var audio = new Audio();
+        audio.preload = "none";
+        var playing = false, mode = null, index = -1;
+        var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function savePrefs() {
+          try {
+            localStorage.setItem("wes-narr-lang", lang);
+            localStorage.setItem("wes-narr-voice", voice);
+          } catch (e) {}
+        }
+        function syncPickers() {
+          Array.prototype.forEach.call(document.querySelectorAll("[data-voice]"), function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-voice") === voice ? "true" : "false");
+          });
+          Array.prototype.forEach.call(document.querySelectorAll("[data-lang]"), function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang ? "true" : "false");
+          });
+        }
+        function srcFor(unit) {
+          return "assets/audio/" + unit + "-" + lang + "-" + voice + ".mp3";
+        }
+        function clearHi() {
+          sections.forEach(function (el) { el.classList.remove("reading-now"); });
+        }
+        function setBtn() {
+          btn.classList.toggle("is-reading", playing);
+          btn.setAttribute("aria-pressed", playing ? "true" : "false");
+          ico.textContent = playing ? "⏹" : "🔊";
+          label.innerHTML = playing
+            ? '<span class="ta">நிறுத்துங்கள்</span> · Stop'
+            : '<span class="ta">கேளுங்கள்</span> · Listen';
+        }
+        function highlight(el) {
+          clearHi();
+          el.classList.add("reading-now");
+          var r = el.getBoundingClientRect();
+          if (r.top < 84 || r.bottom > window.innerHeight) {
+            el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+          }
+        }
+        function playAt(i) {
+          index = i;
+          var el = sections[i];
+          highlight(el);
+          audio.src = srcFor(el.getAttribute("data-narr"));
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () { advance(); });
+        }
+        function advance() {
+          if (!playing) return;
+          if (mode === "full" && index < sections.length - 1) {
+            playAt(index + 1);
+          } else {
+            stopAll();
+          }
+        }
+        function startFull() {
+          playing = true; mode = "full"; setBtn(); playAt(0);
+        }
+        function startSingle(el) {
+          playing = true; mode = "single"; setBtn();
+          playAt(sections.indexOf(el));
+        }
+        function stopAll() {
+          playing = false; mode = null; index = -1;
+          audio.pause();
+          try { audio.currentTime = 0; } catch (e) {}
+          clearHi(); setBtn();
+        }
+        audio.addEventListener("ended", advance);
+        audio.addEventListener("error", function () { if (playing) advance(); });
+
+        btn.addEventListener("click", function () {
+          if (playing) stopAll(); else startFull();
+        });
+
+        sections.forEach(function (el) {
+          el.classList.add("can-read");
+          el.setAttribute("tabindex", "0");
+          el.setAttribute("title", "Tap to listen · கேட்கத் தொடவும்");
+          el.addEventListener("click", function (e) {
+            if (e.target.closest("a, button")) return;
+            if (playing && sections[index] === el) stopAll();
+            else startSingle(el);
+          });
+          el.addEventListener("keydown", function (e) {
+            if (e.key !== "Enter" && e.key !== " ") return;
+            if (e.target !== el) return;
+            e.preventDefault();
+            if (playing && sections[index] === el) stopAll();
+            else startSingle(el);
+          });
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll("[data-voice]"), function (b) {
+          b.addEventListener("click", function () {
+            var v = b.getAttribute("data-voice");
+            if (v === voice) return;
+            voice = v; savePrefs(); syncPickers();
+            if (playing) playAt(index);
+          });
+        });
+        Array.prototype.forEach.call(document.querySelectorAll("[data-lang]"), function (b) {
+          b.addEventListener("click", function () {
+            var l = b.getAttribute("data-lang");
+            if (l === lang) return;
+            lang = l; savePrefs(); syncPickers();
+            if (playing) playAt(index);
+          });
+        });
+
+        window.addEventListener("pagehide", function () { if (playing) stopAll(); });
+        syncPickers(); setBtn();
+      })();
+    </script>
+
+    <script>
+      (function () {
+        /* WhatsApp share: the page's own link with a short Grand Launch message. */
+        var msg = "🔔 World Education System — Grand Launch · பெரும் தொடக்கம் — " +
+          "Monday 23 November 2026 · திங்கட்கிழமை, 23 நவம்பர் 2026. " +
+          "https://world.farfazlearning.com";
+        var waHref = "https://wa.me/?text=" + encodeURIComponent(msg);
+        Array.prototype.forEach.call(document.querySelectorAll(".wa-share"), function (a) {
+          a.setAttribute("href", waHref);
+        });
+
+        /* Add to Calendar: downloads an .ics for the Grand Launch,
+           Monday 23 November 2026, 00:00 India time (18:30 UTC, 22 Nov). */
+        var calBtn = document.getElementById("cal-btn");
+        if (calBtn) {
+          calBtn.addEventListener("click", function () {
+            var stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+            var ics = [
+              "BEGIN:VCALENDAR",
+              "VERSION:2.0",
+              "PRODID:-//FARFAZ//World Education System//EN",
+              "BEGIN:VEVENT",
+              "UID:wes-grand-launch-20261123@world.farfazlearning.com",
+              "DTSTAMP:" + stamp,
+              "DTSTART:20261122T183000Z",
+              "DTEND:20261122T193000Z",
+              "SUMMARY:World Education System — Grand Launch",
+              "DESCRIPTION:Joining opens today — and every member gets their own Member ID. https://world.farfazlearning.com",
+              "END:VEVENT",
+              "END:VCALENDAR"
+            ].join("\r\n");
+            var blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "world-education-system-grand-launch.ics";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+          });
+        }
       })();
     </script>
   </body>
