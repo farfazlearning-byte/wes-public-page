@@ -3,9 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="description" content="World Education System by FARFAZ — voice-taught story lessons with karaoke reading, from pre-KG to Class 12 and beyond. Grand Launch: Monday 23 November 2026." />
+    <link rel="canonical" href="https://world.farfazlearning.com" />
     <link rel="icon" href="data:," />
+    <script>
+      /* Eye-comfort choice (Bright / Dark / Eye care) applied before first
+         paint so the page never flashes the wrong theme. */
+      try {
+        var savedTheme = localStorage.getItem("wes-theme");
+        if (savedTheme === "dark" || savedTheme === "eyecare") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+        }
+      } catch (e) {}
+    </script>
     <title>World Education System — FARFAZ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,6 +44,44 @@
         --serif-ta: "Noto Serif Tamil", "Playfair Display", Georgia, serif;
         --sans: "Source Sans 3", "Noto Sans Tamil", system-ui, -apple-system, "Segoe UI", sans-serif;
       }
+      /* ---------- eye-comfort themes — Bright above is the default;
+         Dark and Eye care restyle only the light surfaces. The hero,
+         cards and panels stay deep green in every theme. ---------- */
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --paper: #0c2019;
+        --paper-2: #0a1a14;
+        --ink: #ece3c8;
+        --ink-soft: #b3c2ab;
+        --hairline: #2e4d3f;
+      }
+      html[data-theme="eyecare"] {
+        --paper: #f4e6bf;
+        --paper-2: #eedcae;
+        --ink: #3b3120;
+        --ink-soft: #6f5f42;
+        --hairline: #dbc48d;
+      }
+      html[data-theme="dark"] .wordmark,
+      html[data-theme="dark"] .sec-head h2,
+      html[data-theme="dark"] .about h2,
+      html[data-theme="dark"] .connect h2,
+      html[data-theme="dark"] .join-steps p b,
+      html[data-theme="dark"] .link-tile .lt-top,
+      html[data-theme="dark"] footer .f-brand { color: #f2ead2; }
+      html[data-theme="dark"] .sec-head .eyebrow,
+      html[data-theme="dark"] .about .eyebrow,
+      html[data-theme="dark"] .connect .eyebrow { color: #57c99a; }
+      html[data-theme="dark"] .sec-head .en,
+      html[data-theme="dark"] .connect .sub b,
+      html[data-theme="dark"] .qr-cap .ta,
+      html[data-theme="dark"] .link-tile .lt-top .ta,
+      html[data-theme="dark"] footer .f-brand .ta { color: var(--gold-bright); }
+      html[data-theme="dark"] .link-tile { background: rgba(255, 255, 255, .05); border-color: rgba(201, 162, 75, .55); }
+      html[data-theme="dark"] .link-tile:hover { background: rgba(255, 255, 255, .1); }
+      html[data-theme="dark"] .topnav a:hover { color: var(--gold-bright); }
+      html[data-theme="dark"] .topnav a.join-link { background: var(--gold-bright); color: #14332a; }
+      html[data-theme="dark"] .topnav a.join-link:hover { background: #f4d67c; color: #14332a; }
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
       body {
@@ -83,9 +132,34 @@
       @supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
         .topbar { background: var(--paper); }
       }
+      html[data-theme="dark"] .topbar { background: rgba(9, 25, 19, .92); }
+      html[data-theme="eyecare"] .topbar { background: rgba(250, 240, 208, .92); }
       .topbar-in {
         display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; row-gap: 8px;
         gap: 16px; padding-top: 14px; padding-bottom: 14px;
+      }
+      /* ---------- eye-comfort switch — always in the top bar ---------- */
+      .theme-switch {
+        display: flex; gap: 3px; flex: none;
+        background: rgba(11, 46, 39, .08);
+        border: 1px solid rgba(201, 162, 75, .5);
+        border-radius: 999px; padding: 3px;
+      }
+      html[data-theme="dark"] .theme-switch { background: rgba(250, 245, 230, .08); }
+      .theme-btn {
+        border: none; background: transparent; cursor: pointer;
+        font-family: var(--sans); font-weight: 700; font-size: .82rem;
+        color: var(--ink); padding: 5px 11px; border-radius: 999px;
+        min-height: 0; white-space: nowrap;
+      }
+      .theme-btn .ta { font-weight: 600; }
+      .theme-btn:hover { color: var(--gold-deep); }
+      html[data-theme="dark"] .theme-btn:hover { color: var(--gold-bright); }
+      .theme-btn[aria-pressed="true"] { background: var(--deep); color: var(--gold-bright); }
+      .theme-btn[aria-pressed="true"]:hover { color: var(--gold-bright); }
+      @media (max-width: 620px) {
+        .theme-switch { order: 3; margin: 0 auto; }
       }
       .wordmark {
         font-family: var(--serif); font-size: 1.42rem; font-weight: 700;
@@ -511,20 +585,33 @@
         .launch-box .lb-label::before { animation: none; }
         .launch-box::after { animation: none; }
       }
-      /* Phone clearance — measured on the RENDERED page at 390px, not
-         estimated: the floating top bar's bottom edge sits ~81px down,
-         the box rendered 64px tall (top:88px → bottom edge at 152px),
-         and the hero eyebrow's first line began at ~133px — i.e. behind
-         the box's lower half, showing faintly through the glass. The box
-         keeps its place as a slim two-row strip (label + date on one
-         line, the four time cells beneath) wholly below the top bar,
-         glowing ring and dot included; the hero instead gains top room
-         on phones so the eyebrow's first line starts at ~177px — a clear
-         ~25px below the box's bottom edge, fully readable. */
+      /* Desktop clearance: the top bar wraps to two rows at desktop
+         widths too (brand + nav on the first row, the eye-comfort
+         switch on the second), so its bottom edge sits at ~138px —
+         well below the box's original top:84px, which left the label
+         clipped and the Days cell hidden behind the pill. From 621px
+         up, the box therefore starts at top:170px: wholly below the
+         top bar, glowing ring and dot included (they extend 16px
+         above the box), in the hero's empty right-hand space beside
+         the orbit rings, clear of every line of hero text. */
+      @media (min-width: 621px) {
+        .launch-box { top: 170px; }
+      }
+      /* Phone clearance: the top bar now wraps to two rows on phones
+         (brand + join on the first row, the eye-comfort switch centred
+         on the second), so its bottom edge sits lower than before. The
+         box therefore starts at top:140px as a slim two-row strip
+         (label + date on one line, the four time cells beneath), wholly
+         below the top bar, glowing ring and dot included; the hero
+         keeps its extra top room so its eyebrow begins below the box's
+         bottom edge (~204px), fully readable. Anchor jumps also gain
+         room so section heads never hide under the taller top bar. */
       @media (max-width: 620px) {
         .hero { padding-top: 96px; }
+        #steps, #about, #join, #prices-card { scroll-margin-top: 150px; }
+        .can-read { scroll-margin-top: 150px; }
         .launch-box {
-          top: 88px; right: 8px; max-width: calc(100vw - 16px);
+          top: 140px; right: 8px; max-width: calc(100vw - 16px);
           display: flex; flex-wrap: wrap; align-items: center;
           padding: 4px 8px 5px; border-radius: 14px; text-align: left;
         }
@@ -576,6 +663,11 @@
           <a href="#about" class="ta">எங்களைப் பற்றி</a>
           <a href="#join" class="join-link ta">சேரவும்</a>
         </nav>
+        <div class="theme-switch" role="group" aria-label="Eye comfort — Bright, Dark or Eye care">
+          <button type="button" class="theme-btn" data-theme-btn="bright" aria-pressed="true">Bright</button>
+          <button type="button" class="theme-btn" data-theme-btn="dark" aria-pressed="false">Dark</button>
+          <button type="button" class="theme-btn" data-theme-btn="eyecare" aria-pressed="false">Eye care · <span class="ta">கண் நலம்</span></button>
+        </div>
       </div>
     </div>
 
@@ -929,6 +1021,33 @@
 
     <script>
       (function () {
+        /* Eye-comfort switch: Bright / Dark / Eye care, always in the top
+           bar. The choice is remembered on this device, like the
+           narration voice and language choices below. */
+        var root = document.documentElement;
+        var btns = Array.prototype.slice.call(document.querySelectorAll("[data-theme-btn]"));
+        if (!btns.length) return;
+        function current() { return root.getAttribute("data-theme") || "bright"; }
+        function sync() {
+          btns.forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-theme-btn") === current() ? "true" : "false");
+          });
+        }
+        btns.forEach(function (b) {
+          b.addEventListener("click", function () {
+            var t = b.getAttribute("data-theme-btn");
+            if (t === "bright") root.removeAttribute("data-theme");
+            else root.setAttribute("data-theme", t);
+            try { localStorage.setItem("wes-theme", t); } catch (e) {}
+            sync();
+          });
+        });
+        sync();
+      })();
+    </script>
+
+    <script>
+      (function () {
         /* Countdown to the Grand Launch: Monday 23 Nov 2026, 9:00 AM IST. */
         var launch = new Date("2026-11-23T09:00:00+05:30").getTime();
         var box = document.getElementById("countdown");
@@ -973,7 +1092,10 @@
     <script>
       (function () {
         /* Pre-recorded narration in the two house voices (Nisa / Arshed),
-           in English, Tamil or Hindi, with a soft music bed under the voice.
+           in English, Tamil or Hindi. A soft music bed — a quiet chord pad
+           synthesised live in the browser, far below the voice — plays
+           under the narration and stops when it stops. One sound source
+           at a time: starting any reading stops whatever was playing.
            Nothing plays until a visitor taps. */
         var btn = document.getElementById("listen-btn");
         var ico = document.getElementById("listen-ico");
@@ -992,6 +1114,45 @@
         var audio = new Audio();
         audio.preload = "none";
         var playing = false, mode = null, index = -1;
+
+        /* ---- soft music bed (WebAudio pad, created on first tap) ---- */
+        var AC = window.AudioContext || window.webkitAudioContext;
+        var musicCtx = null, musicGain = null, musicNodes = [];
+        function musicStart() {
+          if (!AC) return;
+          if (musicCtx) { if (musicCtx.resume) musicCtx.resume(); return; }
+          try {
+            musicCtx = new AC();
+            var lp = musicCtx.createBiquadFilter();
+            lp.type = "lowpass"; lp.frequency.value = 850;
+            musicGain = musicCtx.createGain(); musicGain.gain.value = 0;
+            musicGain.connect(lp); lp.connect(musicCtx.destination);
+            [130.81, 196.00, 261.63, 329.63].forEach(function (f, i) {
+              var o = musicCtx.createOscillator();
+              o.type = i < 2 ? "sine" : "triangle"; o.frequency.value = f;
+              var g = musicCtx.createGain(); g.gain.value = i < 2 ? 0.5 : 0.26;
+              o.connect(g); g.connect(musicGain); o.start();
+              musicNodes.push(o);
+            });
+            var lfo = musicCtx.createOscillator(); lfo.frequency.value = 0.07;
+            var lg = musicCtx.createGain(); lg.gain.value = 0.011;
+            lfo.connect(lg); lg.connect(musicGain.gain); lfo.start();
+            musicNodes.push(lfo);
+            musicGain.gain.setTargetAtTime(0.034, musicCtx.currentTime, 1.4);
+          } catch (e) { musicCtx = null; musicNodes = []; }
+        }
+        function musicStop() {
+          if (!musicCtx) return;
+          var ctx = musicCtx, nodes = musicNodes, gain = musicGain;
+          musicCtx = null; musicNodes = []; musicGain = null;
+          try {
+            gain.gain.setTargetAtTime(0, ctx.currentTime, 0.35);
+            setTimeout(function () {
+              nodes.forEach(function (o) { try { o.stop(); } catch (e) {} });
+              try { ctx.close(); } catch (e) {}
+            }, 1500);
+          } catch (e) {}
+        }
         var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         function savePrefs() {
@@ -1034,6 +1195,7 @@
           index = i;
           var el = sections[i];
           highlight(el);
+          musicStart();
           audio.src = srcFor(el.getAttribute("data-narr"));
           var p = audio.play();
           if (p && p.catch) p.catch(function () { advance(); });
@@ -1055,6 +1217,7 @@
         }
         function stopAll() {
           playing = false; mode = null; index = -1;
+          musicStop();
           audio.pause();
           try { audio.currentTime = 0; } catch (e) {}
           clearHi(); setBtn();
@@ -1118,7 +1281,8 @@
         });
 
         /* Add to Calendar: downloads an .ics for the Grand Launch,
-           Monday 23 November 2026, 00:00 India time (18:30 UTC, 22 Nov). */
+           Monday 23 November 2026, 9:00 AM India time (03:30 UTC) —
+           the same instant the countdown targets. */
         var calBtn = document.getElementById("cal-btn");
         if (calBtn) {
           calBtn.addEventListener("click", function () {
@@ -1130,8 +1294,8 @@
               "BEGIN:VEVENT",
               "UID:wes-grand-launch-20261123@world.farfazlearning.com",
               "DTSTAMP:" + stamp,
-              "DTSTART:20261122T183000Z",
-              "DTEND:20261122T193000Z",
+              "DTSTART:20261123T033000Z",
+              "DTEND:20261123T043000Z",
               "SUMMARY:World Education System — Grand Launch",
               "DESCRIPTION:Joining opens today — and every member gets their own Member ID. https://world.farfazlearning.com",
               "END:VEVENT",
