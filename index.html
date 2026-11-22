@@ -214,6 +214,17 @@
       html[data-theme="dark"] .wb-cell b { color: #9ec5ff; }
       .wb-cell i { font-style: normal; font-size: .58rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 
+      /* ---------- tap-a-price UPI pay panel (India) ---------- */
+      .tier-row.pay-tap { width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px dashed rgba(28,109,217,.25); font: inherit; color: inherit; cursor: pointer; padding-left: 6px; padding-right: 6px; border-radius: 8px; }
+      .tier-row.pay-tap:hover, .tier-row.pay-tap:focus-visible { background: rgba(28,109,217,.08); outline: 2px solid var(--blue); outline-offset: -2px; }
+      .tier-row.pay-tap[aria-pressed="true"] { background: rgba(232,178,58,.18); box-shadow: inset 0 0 0 2px var(--gold); }
+      .tier-row.pay-tap .t-amt::after { content: " · Tap to pay"; font-size: .62rem; font-weight: 900; letter-spacing: .06em; color: var(--blue); text-transform: uppercase; }
+      .upi-panel { margin-top: 12px; text-align: center; }
+      .upi-panel img { display: block; margin: 6px auto; width: min(230px, 60vw); height: auto; background: #fff; border-radius: 10px; padding: 6px; }
+      .upi-panel .upi-amt { font-family: var(--head); font-size: 1.25rem; color: var(--ink); margin: 4px 0 2px; }
+      .upi-panel .upi-steps { text-align: left; font-size: .86rem; line-height: 1.45; margin: 8px 0 0; padding-left: 1.2em; }
+      .upi-panel .upi-hint { font-weight: 800; color: var(--blue-deep); }
+
       /* ---------- hero ---------- */
       .hero { padding: clamp(34px, 5vw, 60px) 0 clamp(20px, 3vw, 30px); }
       .hero-grid { display: grid; gap: 30px; grid-template-columns: 1fr; align-items: center; }
@@ -1048,23 +1059,32 @@
               <span class="country-lang">हिन्दी · English · தமிழ்</span>
             </h3>
             <div class="tier-rows">
-              <div class="tier-row"><span class="t-name" data-i18n="t_monthly">Monthly</span><span class="t-amt">₹249 <small data-i18n="per_month">/ month</small></span></div>
-              <div class="tier-row"><span class="t-name" data-i18n="t_yearly">Yearly</span><span class="t-amt">₹2,499 <small data-i18n="per_year">/ year</small></span></div>
-              <div class="tier-row"><span class="t-name" data-i18n="t_family">Family</span><span class="t-amt">₹499 <small data-i18n="per_month2">/ month</small></span></div>
-              <div class="tier-row"><span class="t-name">Family · <span data-i18n="t_yearly2">Yearly</span></span><span class="t-amt">₹4,999 <small data-i18n="per_year2">/ year</small></span></div>
-              <div class="tier-row"><span class="t-name">Premium</span><span class="t-amt">₹399 <small data-i18n="per_month3">/ month</small></span></div>
-              <div class="tier-row"><span class="t-name">Golden</span><span class="t-amt">₹649 <small data-i18n="per_month4">/ month</small></span></div>
-              <div class="tier-row star"><span class="t-name">Diamond · <span data-i18n="t_world">World pass</span></span><span class="t-amt">₹999 <small data-i18n="per_month5">/ month</small></span></div>
+              <button type="button" class="tier-row pay-tap" data-amt="249" data-plan="Monthly" aria-pressed="false"><span class="t-name" data-i18n="t_monthly">Monthly</span><span class="t-amt">₹249 <small data-i18n="per_month">/ month</small></span></button>
+              <button type="button" class="tier-row pay-tap" data-amt="2499" data-plan="Yearly" aria-pressed="false"><span class="t-name" data-i18n="t_yearly">Yearly</span><span class="t-amt">₹2,499 <small data-i18n="per_year">/ year</small></span></button>
+              <button type="button" class="tier-row pay-tap" data-amt="499" data-plan="Family" aria-pressed="false"><span class="t-name" data-i18n="t_family">Family</span><span class="t-amt">₹499 <small data-i18n="per_month2">/ month</small></span></button>
+              <button type="button" class="tier-row pay-tap" data-amt="4999" data-plan="Family Yearly" aria-pressed="false"><span class="t-name">Family · <span data-i18n="t_yearly2">Yearly</span></span><span class="t-amt">₹4,999 <small data-i18n="per_year2">/ year</small></span></button>
+              <button type="button" class="tier-row pay-tap" data-amt="399" data-plan="Premium" aria-pressed="false"><span class="t-name">Premium</span><span class="t-amt">₹399 <small data-i18n="per_month3">/ month</small></span></button>
+              <button type="button" class="tier-row pay-tap" data-amt="649" data-plan="Golden" aria-pressed="false"><span class="t-name">Golden</span><span class="t-amt">₹649 <small data-i18n="per_month4">/ month</small></span></button>
+              <button type="button" class="tier-row star pay-tap" data-amt="999" data-plan="Diamond" aria-pressed="false"><span class="t-name">Diamond · <span data-i18n="t_world">World pass</span></span><span class="t-amt">₹999 <small data-i18n="per_month5">/ month</small></span></button>
             </div>
           </div>
           <div class="pay-block">
-            <img src="assets/join-qr.png" width="820" height="820" alt="QR code that opens the World Education System joining section of this page" loading="lazy" />
             <h4 data-i18n="pay_title">How you will pay &amp; join</h4>
-            <p data-i18n="pay_sub">At the Grand Launch — Monday 23 November 2026 — joining opens here. In India you pay by UPI, card or net banking; in other countries by card. As soon as your payment is done, you receive your own Member ID — yours for life.</p>
+            <p data-i18n="pay_sub">In India: tap your plan's price on the left — the QR for that exact amount appears below. Scan it with any UPI app, pay, then enter your transaction number when you join — after a quick confirmation, your Member ID opens your plan. In other countries, card joining opens with our card gateway.</p>
+            <div class="upi-panel" id="upi-panel">
+              <p class="upi-hint" id="upi-hint">👆 Tap a price — its payment QR appears here.</p>
+              <img id="upi-qr" src="assets/upi-249.svg" alt="UPI payment QR code" style="display:none" />
+              <p class="upi-amt" id="upi-amt" style="display:none"></p>
+              <ol class="upi-steps" id="upi-steps" style="display:none">
+                <li>Scan this QR with GPay, PhonePe, Paytm or any UPI app — pay exactly this amount to <b>NISA TRADING</b>.</li>
+                <li>Note the <b>transaction number (UTR)</b> from your payment.</li>
+                <li>Tap <b>Join</b> below and enter that number — after a quick confirmation, your plan opens.</li>
+              </ol>
+            </div>
             <div class="pay-methods" aria-hidden="true">
               <span>UPI</span><span data-i18n="pay_card">Card</span><span data-i18n="pay_net">Net banking</span><span>Member ID</span>
             </div>
-            <p data-i18n="pay_note">Joining is now open — the Grand Launch was Monday 23 November 2026. Scan the QR code to go to the joining section and get your Member ID.</p>
+            <p data-i18n="pay_note">Joining is now open — the Grand Launch was Monday 23 November 2026. Tap a price above to pay by UPI, then join below to get your Member ID.</p>
           </div>
         </div>
 
@@ -1542,7 +1562,7 @@
         <div class="connect" data-narr="join">
           <p class="eyebrow">Connect · Join</p>
           <h2 data-i18n="join_title">Join the World Education System</h2>
-          <p class="sub"><span data-i18n="join_sub">Joining opens at the Grand Launch — Monday 23 November 2026. This link is the way in.</span>
+          <p class="sub"><span data-i18n="join_sub">Joining is open — the Grand Launch was Monday 23 November 2026. Three steps and you are in.</span>
             <span class="ta">சேர்க்கை பெரும் தொடக்க நாளில் திறக்கும் — திங்கட்கிழமை, 23 நவம்பர் 2026. இந்த link தான் உள்ளே செல்லும் வழி.</span>
           </p>
 
@@ -1556,22 +1576,22 @@
                 <li>
                   <span class="step-num" aria-hidden="true">1</span>
                   <div>
-                    <p><b>Scan the QR code</b> with your phone camera — or open the link below.</p>
-                    <p class="ta">உங்கள் தொலைபேசி camera-வால் QR code-ஐ scan செய்யுங்கள் — அல்லது கீழுள்ள link-ஐத் திறக்கவும்.</p>
+                    <p><b>Join:</b> your name, phone or email, and a PIN — your Member ID is yours at once, for life.</p>
+                    <p class="ta">சேருங்கள்: உங்கள் பெயர், தொலைபேசி அல்லது மின்னஞ்சல், ஒரு PIN — உங்கள் Member ID உடனே, வாழ்நாள் முழுவதும் உங்களுடையது.</p>
                   </div>
                 </li>
                 <li>
                   <span class="step-num" aria-hidden="true">2</span>
                   <div>
-                    <p><b>Keep the link safe.</b> It is your way in when joining opens.</p>
-                    <p class="ta">இந்த link-ஐப் பாதுகாப்பாக வைத்திருங்கள். சேர்க்கை திறக்கும்போது இதுவே உங்கள் வழி.</p>
+                    <p><b>Choose your plan</b> in the Prices section above and tap its price — the QR for that exact amount appears.</p>
+                    <p class="ta">மேலுள்ள விலைப் பகுதியில் உங்கள் plan-ஐத் தேர்ந்து அதன் விலையைத் தட்டுங்கள் — அந்தத் தொகைக்கான QR தோன்றும்.</p>
                   </div>
                 </li>
                 <li>
                   <span class="step-num" aria-hidden="true">3</span>
                   <div>
-                    <p><b>Join on launch day</b> — Monday 23 November 2026 — pay by UPI or card, get your Member ID, and start learning.</p>
-                    <p class="ta">தொடக்க நாளில் — திங்கட்கிழமை, 23 நவம்பர் 2026 — சேர்ந்து, UPI அல்லது card-ஆல் பணம் செலுத்தி, உங்கள் Member ID பெற்று கற்கத் தொடங்குங்கள்.</p>
+                    <p><b>Scan, pay, enter your transaction number</b> — after a quick confirmation your plan opens, and you start learning.</p>
+                    <p class="ta">Scan செய்து, பணம் செலுத்தி, உங்கள் transaction number-ஐ உள்ளிடுங்கள் — சிறு உறுதிப்படுத்தலுக்குப் பிறகு உங்கள் plan திறக்கும், கற்கத் தொடங்கலாம்.</p>
                   </div>
                 </li>
               </ol>
@@ -2394,6 +2414,31 @@
           setTimeout(tick, 1000);
         }
         tick();
+      })();
+    </script>
+  
+    <script>
+      (function () {
+        /* Tap a price -> the UPI QR for that exact amount. */
+        var qr = document.getElementById("upi-qr"),
+            amtEl = document.getElementById("upi-amt"),
+            steps = document.getElementById("upi-steps"),
+            hint = document.getElementById("upi-hint");
+        if (!qr) return;
+        var fmt = new Intl.NumberFormat("en-IN");
+        document.querySelectorAll(".tier-row.pay-tap").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            document.querySelectorAll(".tier-row.pay-tap").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+            btn.setAttribute("aria-pressed", "true");
+            var amt = btn.getAttribute("data-amt"), plan = btn.getAttribute("data-plan");
+            qr.src = "assets/upi-" + amt + ".svg";
+            qr.alt = "UPI payment QR for " + plan + ", " + amt + " rupees";
+            amtEl.textContent = plan + " — ₹" + fmt.format(Number(amt));
+            qr.style.display = "block"; amtEl.style.display = "block"; steps.style.display = "block";
+            hint.textContent = "Scan to pay — " + plan;
+            document.getElementById("upi-panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+          });
+        });
       })();
     </script>
   </body>
