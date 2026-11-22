@@ -1633,8 +1633,15 @@
         function tick() {
           var diff = launch - Date.now();
           if (diff <= 0) {
-            if (box) box.innerHTML = '<span class="cd-open">Joining is now open — welcome in!</span>';
-            if (lbBox) lbBox.innerHTML = '<span class="lb-open">🎉 Launched!</span>';
+            var el = Date.now() - launch;
+            var ed = Math.floor(el / 86400000),
+                eh = pad(Math.floor(el % 86400000 / 3600000)),
+                em = pad(Math.floor(el % 3600000 / 60000)),
+                es = pad(Math.floor(el % 60000 / 1000));
+            var since = (ed > 0 ? ed + "d " : "") + eh + "h " + em + "m " + es + "s";
+            if (box) box.innerHTML = '<span class="cd-open">🎉 Launched — ' + since + ' ago · Joining is now open — welcome in!</span>';
+            if (lbBox) lbBox.innerHTML = '<span class="lb-open">🎉 Launched! · ' + since + ' since launch</span>';
+            setTimeout(tick, 1000);
             return;
           }
           var dd = Math.floor(diff / 86400000),
