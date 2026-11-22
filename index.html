@@ -610,6 +610,62 @@
   </head>
 
   <body data-uilang="en">
+    <!-- ================= INTRO LOGO FILM (plays first, with sound) ================= -->
+    <style>
+      #farfaz-intro { position: fixed; inset: 0; z-index: 2147483000; background: #000; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.7s ease; }
+      #farfaz-intro.fading { opacity: 0; pointer-events: none; }
+      #farfaz-intro video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+      #farfaz-intro .intro-sound { position: absolute; left: 50%; bottom: 9%; transform: translateX(-50%); display: none; background: #e8b23a; color: #101418; border: 0; border-radius: 999px; padding: 16px 30px; font: 800 20px/1.2 system-ui, sans-serif; cursor: pointer; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55); }
+      #farfaz-intro .intro-sound.show { display: block; }
+      #farfaz-intro .intro-skip { position: absolute; top: 18px; right: 18px; display: none; background: rgba(255, 255, 255, 0.14); color: #fff; border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 999px; padding: 10px 20px; font: 700 16px/1.2 system-ui, sans-serif; cursor: pointer; }
+      #farfaz-intro .intro-skip.show { display: block; }
+    </style>
+    <div id="farfaz-intro" role="dialog" aria-label="FARFAZ intro">
+      <video id="farfaz-intro-video" src="assets/intro-logo.mp4" autoplay playsinline preload="auto"></video>
+      <button type="button" class="intro-sound" id="farfaz-intro-sound">🔊 Tap for sound</button>
+      <button type="button" class="intro-skip" id="farfaz-intro-skip">Skip →</button>
+    </div>
+    <script>
+      (function () {
+        var overlay = document.getElementById("farfaz-intro");
+        var video = document.getElementById("farfaz-intro-video");
+        var soundBtn = document.getElementById("farfaz-intro-sound");
+        var skipBtn = document.getElementById("farfaz-intro-skip");
+        if (!overlay || !video) return;
+        var done = false;
+        function finish() {
+          if (done) return;
+          done = true;
+          try { video.pause(); } catch (e) {}
+          overlay.classList.add("fading");
+          setTimeout(function () { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 750);
+        }
+        video.addEventListener("ended", finish);
+        skipBtn.addEventListener("click", finish);
+        setTimeout(function () { skipBtn.classList.add("show"); }, 2000);
+        soundBtn.addEventListener("click", function () {
+          soundBtn.classList.remove("show");
+          video.muted = false;
+          try { video.currentTime = 0; } catch (e) {}
+          var p = video.play();
+          if (p && p.catch) p.catch(function () {});
+        });
+        /* Try to play WITH sound first. If the browser blocks sound autoplay,
+           fall back to muted playback and offer the sound button, which
+           restarts the film from the beginning with sound. */
+        video.muted = false;
+        var attempt = video.play();
+        function blocked() {
+          video.muted = true;
+          soundBtn.classList.add("show");
+          var p2 = video.play();
+          if (p2 && p2.catch) p2.catch(function () {});
+        }
+        if (attempt && attempt.catch) attempt.catch(blocked);
+        /* Safety net: if playback ended up muted anyway, show the sound button. */
+        setTimeout(function () { if (!done && video.muted) soundBtn.classList.add("show"); }, 600);
+      })();
+    </script>
     <!-- ================= LAUNCH COUNTDOWN STRIP ================= -->
     <div class="launch-box" id="launch-box" role="timer" aria-label="Time until the Grand Launch — Monday 23 November 2026">
       <p class="lb-label" data-i18n="lb_label">Grand Launch</p>
