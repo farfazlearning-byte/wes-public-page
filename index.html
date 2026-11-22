@@ -1633,14 +1633,16 @@
         function tick() {
           var diff = launch - Date.now();
           if (diff <= 0) {
+            /* Launched: the same boxes now count UP from the launch moment, every second, for good. */
             var el = Date.now() - launch;
             var ed = Math.floor(el / 86400000),
                 eh = pad(Math.floor(el % 86400000 / 3600000)),
                 em = pad(Math.floor(el % 3600000 / 60000)),
                 es = pad(Math.floor(el % 60000 / 1000));
-            var since = (ed > 0 ? ed + "d " : "") + eh + "h " + em + "m " + es + "s";
-            if (box) box.innerHTML = '<span class="cd-open">🎉 Launched — ' + since + ' ago · Joining is now open — welcome in!</span>';
-            if (lbBox) lbBox.innerHTML = '<span class="lb-open">🎉 Launched! · ' + since + ' since launch</span>';
+            if (dEl) { dEl.textContent = ed; hEl.textContent = eh; mEl.textContent = em; sEl.textContent = es; }
+            if (lbD) { lbD.textContent = ed; lbH.textContent = eh; lbM.textContent = em; lbS.textContent = es; }
+            var lbDate = lbBox ? lbBox.querySelector(".lb-date") : null;
+            if (lbDate && !lbDate.getAttribute("data-live")) { lbDate.setAttribute("data-live", "1"); lbDate.textContent = "🎉 Launched · Mon 23 Nov 2026 · counting up — live"; }
             setTimeout(tick, 1000);
             return;
           }
