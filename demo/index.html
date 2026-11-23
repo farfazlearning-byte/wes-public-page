@@ -1774,16 +1774,36 @@
       }
       var JOIN_URL = "https://wes-app-lyart.vercel.app/join";
       document.querySelectorAll("[data-say]").forEach(function (card) {
+        if (card.hasAttribute("data-join")) {
+          /* Join cards (class / Beyond Class 12 / country): the WHOLE card
+             surface — heading included — navigates to the joining page.
+             Speech lives ONLY on the card's Listen pill, which carries its
+             own handler and never lets the tap reach the card. */
+          var joinPill = card.querySelector("[data-listen]");
+          if (joinPill) {
+            joinPill.addEventListener("click", function (e) {
+              e.stopPropagation();
+              playSay(card);
+            });
+          }
+          card.addEventListener("click", function () { window.location.href = JOIN_URL; });
+          card.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              if (e.target.closest && e.target.closest("[data-listen]")) return;
+              e.preventDefault();
+              window.location.href = JOIN_URL;
+            }
+          });
+          return;
+        }
         card.addEventListener("click", function (e) {
           if (e.target.closest && e.target.closest("[data-listen]")) { playSay(card); return; }
-          if (card.hasAttribute("data-join")) { window.location.href = JOIN_URL; return; }
           playSay(card);
         });
         card.addEventListener("keydown", function (e) {
           if (e.key === "Enter" || e.key === " ") {
             if (e.target.closest && e.target.closest("[data-listen]")) return;
             e.preventDefault();
-            if (card.hasAttribute("data-join")) { window.location.href = JOIN_URL; return; }
             playSay(card);
           }
         });
