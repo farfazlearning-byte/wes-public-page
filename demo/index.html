@@ -140,6 +140,7 @@
         font-size: 13px; font-weight: 800; color: var(--accent);
         border: 1.5px solid var(--line); background: var(--chip);
         padding: 6px 12px; border-radius: 999px;
+        font-family: inherit; cursor: pointer;
       }
       .say-chip svg { width: 13px; height: 13px; }
       .country-card .say-chip { position: absolute; top: 10px; right: 10px; margin-top: 0; background: rgba(3, 12, 9, .72); border-color: rgba(255, 255, 255, .35); color: #fff; backdrop-filter: blur(2px); }
@@ -943,22 +944,22 @@
           return '<span class="area-label" style="left:' + a.x + '%;top:' + a.y + '%">' + a.label + '</span>';
         }).join("");
         var cards = CLASSES.map(function (c) {
-          return '<article class="class-card" data-say="' + c.say + '" tabindex="0" role="button" aria-label="Listen: ' + c.en + '">' +
+          return '<article class="class-card" data-say="' + c.say + '" data-join="1" tabindex="0" role="button" aria-label="Start learning: ' + c.en + '">' +
             '<figure class="cc-art"><img src="/demo/assets/' + c.img + '" alt="' + c.alt + '" loading="lazy" /></figure>' +
             '<h3>' + c.en + '</h3><p class="ta">' + c.ta + '</p>' +
             '<p class="desc">' + c.desc + '</p>' +
-            '<span class="go">Start learning ' + ICONS.arrow + '</span><span class="say-chip">' + ICONS.play + ' Listen · கேளுங்கள்</span></article>';
+            '<span class="go">Start learning ' + ICONS.arrow + '</span><button type="button" class="say-chip" data-listen="1" aria-label="Listen: ' + c.en + '">' + ICONS.play + ' Listen · கேளுங்கள்</button></article>';
         }).join("");
         var countryCards = COUNTRIES.map(function (c) {
-          return '<article class="country-card" data-say="' + c.say + '" tabindex="0" role="button" aria-label="Listen: ' + c.en + '">' +
+          return '<article class="country-card" data-say="' + c.say + '" data-join="1" tabindex="0" role="button" aria-label="Join: ' + c.en + '">' +
             '<img src="/demo/assets/' + c.img + '" alt="' + c.alt + '" loading="lazy" />' +
-            '<div class="c-name"><b>' + c.en + ' <span class="ta">· ' + c.ta + '</span></b><span>' + c.note + '</span></div><span class="say-chip">' + ICONS.play + ' Listen</span></article>';
+            '<div class="c-name"><b>' + c.en + ' <span class="ta">· ' + c.ta + '</span></b><span>' + c.note + '</span></div><button type="button" class="say-chip" data-listen="1" aria-label="Listen: ' + c.en + '">' + ICONS.play + ' Listen</button></article>';
         }).join("");
         var beyondCards = BEYOND.map(function (b) {
-          return '<article class="beyond-card" data-say="' + b.say + '" tabindex="0" role="button" aria-label="Listen: ' + b.en + '">' +
+          return '<article class="beyond-card" data-say="' + b.say + '" data-join="1" tabindex="0" role="button" aria-label="Start learning: ' + b.en + '">' +
             '<span class="bc-icon" aria-hidden="true">' + b.mark + '</span>' +
             '<h3>' + b.en + '</h3><p class="ta">' + b.ta + '</p>' +
-            '<p class="desc">' + b.desc + '</p><span class="say-chip">' + ICONS.play + ' Listen · கேளுங்கள்</span></article>';
+            '<p class="desc">' + b.desc + '</p><button type="button" class="say-chip" data-listen="1" aria-label="Listen: ' + b.en + '">' + ICONS.play + ' Listen · கேளுங்கள்</button></article>';
         }).join("");
         var beyondPath =
           '<div class="beyond-path" aria-label="The journey after Class 12">' +
@@ -1771,10 +1772,20 @@
         var p = sayAudio.play();
         if (p && p.catch) p.catch(function () { if (seq === saySeq && sayCard === card) stopSaying(); });
       }
+      var JOIN_URL = "https://wes-app-lyart.vercel.app/join";
       document.querySelectorAll("[data-say]").forEach(function (card) {
-        card.addEventListener("click", function () { playSay(card); });
+        card.addEventListener("click", function (e) {
+          if (e.target.closest && e.target.closest("[data-listen]")) { playSay(card); return; }
+          if (card.hasAttribute("data-join")) { window.location.href = JOIN_URL; return; }
+          playSay(card);
+        });
         card.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playSay(card); }
+          if (e.key === "Enter" || e.key === " ") {
+            if (e.target.closest && e.target.closest("[data-listen]")) return;
+            e.preventDefault();
+            if (card.hasAttribute("data-join")) { window.location.href = JOIN_URL; return; }
+            playSay(card);
+          }
         });
       });
       var sayVoiceBtns = document.querySelectorAll("[data-say-voice].voice-btn, .voice-btn[data-say-voice]");
